@@ -1,13 +1,26 @@
-import Link from 'next/link';
-import React from 'react';
+"use client";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { getCachedUser } from "../utls/cookie/Cookie";
 
 const Dashboard = () => {
-    return (
-        <div className='bg-white w-full h-full  flex items-center relative text-sm justify-center  font-semibold flex-col gap-3'>
-            <p className='absolute top-4 '> Welcome to Dashboard</p>
-          <p className='scale-[8] text-4xl'>😘</p> 
-        </div>
-    );
+  let [user, setUser] = useState({});
+  useEffect(() => {
+    const getUser = async () => {
+      const temUser = await getCachedUser();
+      setUser(temUser);
+      console.log("from /dashboard: ",temUser);
+    };
+    getUser();
+  }, []);
+
+  return (
+    <div className="bg-white w-full h-full font-semibold flex-col gap-3">
+      <p className=""> Welcome to Dashboard</p>
+      <p>name: {user?.name}</p>
+      <p>name: {user?.role}</p>
+    </div>
+  );
 };
 
 export default Dashboard;

@@ -8,12 +8,12 @@ const Footer = () => {
         <div className="flex flex-wrap justify-between">
           {/* Logo Section */}
           <div className="w-full sm:w-1/3 mb-6 sm:mb-0">
-          <p>
+          <span>
 
             <Link href={"/"}>
                        <h2 className=" text-3xl font-bold "><span className="text-gray-400">Ryan</span> <span className="text-red-600">Traders</span> </h2>
             </Link>
-          </p>
+          </span>
             <p className="text-gray-400">An website for Hosting files and Software.</p>
             <p className="text-gray-400">Just create an account and start uploading apps and files</p>
           </div>

@@ -10,16 +10,16 @@ const Login = () => {
   const router = useRouter();
   const [error, setError] = useState("");
   const submitForm = async (e) => {
-    setError("")
+    setError("");
     e.preventDefault();
     let form = e.target;
-    let email = form.email.value;
+    let key = form.key.value;
     let password = form.password.value;
     let button = form.button;
     button.innerText = "Please Wait...";
-    let formData = { email, password };
+    let formData = { key, password };
     let result, data;
-    result = await fetch(API+"auth/login", {
+    result = await fetch(API + "auth/login", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -31,25 +31,26 @@ const Login = () => {
       return;
     }
     button.innerText = "Successful";
-    setCookie("accessToken", data?.cookie, 3);
+    console.log(data);
+    setCookie("accessToken", data?.token, 3);
     setAuthInfo(data);
     router.replace("/dashboard");
   };
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-100 px-2">
+    <div className="min-h-screen w-full flex items-center justify-center bg-white px-2">
       <div className="w-full md:w-[27rem] bg-white border rounded  p-7 ">
-        <h1 className="text-xl font-bold py-4">Login</h1>
+        <h1 className="text-xl font-bold py-4">Login To your Account</h1>
         <form className="flex flex-col gap-3" onSubmit={submitForm}>
           <fieldset className="flex flex-col gap-2">
             <label htmlFor="email" className="font-semibold">
-              Enter Email
+              Enter Email / Phone
             </label>
             <input
-              type="email"
-              id="email"
+              type="text"
+              id="key"
               className="p-2 border-[3px]  rounded focus:border-indigo-500  outline-transparent w-full"
-              name="email"
-              placeholder="Email address"
+              name="key"
+              placeholder="Email or phone number"
               required
             ></input>
           </fieldset>

@@ -7,7 +7,7 @@ let apps = ["Dell", "Asus", "Acer", "HP", "Mac book", "DCL"];
 export default function Home() {
   return (
     <div className=" min-h-screen h-full rounded flex items-center flex-col">
-      <div className="flex gap-3 py-2 pt-1 ps-12 bg-gray-800 w-full items-center  self-start sticky top-0 z-50">
+      <div className="flex gap-3 h-9 ps-12 bg-gray-800 w-full items-center  self-start sticky top-0 z-50 overflow-x-hidden">
         {apps.map((ele) => (
           <Link
             className="text-sm capitalize font-semibold  rounded px-2 text-white hover:text-red-500"

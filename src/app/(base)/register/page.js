@@ -12,17 +12,18 @@ const Register = () => {
   const router = useRouter();
   const submitForm = async (e) => {
     e.preventDefault();
-    setError("")
-    let name, email, password, button, form, formData;
+    setError("");
+    let name, email, phone, password, button, form, formData;
     form = e.target;
     name = form.name.value;
     email = form.email.value;
     password = form.password.value;
+    phone = form.phone.value;
     button = form.button;
     button.innerText = "Please Wait...";
-    formData = { name, email, password };
+    formData = { name, email, password, phone };
     let result, data;
-    result = await fetch(API+"auth/register", {
+    result = await fetch(API + "auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -33,14 +34,16 @@ const Register = () => {
       button.innerText = "Register";
       return;
     }
-    setCookie("accessToken", data?.cookie, 3);
+    setCookie("accessToken", data?.token, 3);
     setAuthInfo(data);
     router.replace("/dashboard");
   };
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-100 px-2">
+    <div className="min-h-screen w-full flex items-center justify-center bg-white px-2">
       <div className="w-full md:w-[27rem] bg-white border rounded  p-7 ">
-        <h1 className="text-xl font-bold py-4">Register a new account</h1>
+        <h1 className="text-xl font-bold py-4 capitalize">
+          Register a new account
+        </h1>
         <form className="flex flex-col gap-3" onSubmit={submitForm}>
           <fieldset className="flex flex-col gap-2">
             <label htmlFor="name" className="font-semibold">
@@ -51,7 +54,7 @@ const Register = () => {
               id="name"
               className="p-2 border-[3px]  rounded focus:border-indigo-500  outline-transparent w-full"
               name="name"
-              placeholder="Full name"
+              placeholder="Your name"
               required
             ></input>
           </fieldset>
@@ -69,6 +72,24 @@ const Register = () => {
             ></input>
           </fieldset>
           <fieldset className="flex flex-col gap-2">
+            <label htmlFor="email" className="font-semibold">
+              Phone Number
+            </label>
+            <div className="flex gap-2">
+              <span className="bg-gray-200 border rounded font-semibold shad ps-1 pe-3 flex items-center">
+                +88
+              </span>
+              <input
+                type="number"
+                id="phone"
+                className="p-2 border-[3px]  rounded focus:border-indigo-500  outline-transparent w-full"
+                name="phone"
+                placeholder="Bangladeshi phone number"
+                required
+              ></input>
+            </div>
+          </fieldset>
+          <fieldset className="flex flex-col gap-2">
             <label htmlFor="password" className="font-semibold">
               Enter Password
             </label>
@@ -79,7 +100,7 @@ const Register = () => {
               id="password"
               className="p-2 border-[3px]  rounded focus:border-indigo-500  outline-transparent  w-full"
               name="password"
-              placeholder="Email password"
+              placeholder="Password | Minimum 6 words"
               required
             ></input>
             <p className="font-semibold text-xs text-red-500 capitalize">

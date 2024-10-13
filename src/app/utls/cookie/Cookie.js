@@ -28,17 +28,41 @@ function getCookie(name) {
   }
   return null;
 }
+let user_cached = {};
+async function getCachedUser() {
+  if (user_cached.phone) return user_cached;
+  console.log("not cached: ", user_cached); 
+  let cookie = getCookie("accessToken");
+  try {
+    if (cookie) {
+      const result = await fetch(API + "auth/auto_login", {
+        method: "PUT",
+        headers: { Authorization: `${cookie}` },
+      });
+      const data = await result.json();
+      user_cached = data?.result;
+      return data;
+    }
+  } catch (error) {
+    return user_cached;
+  }
+}
 function GetUser() {
   const [user, setUser] = useState({});
+
   useEffect(() => {
     let cookie = getCookie("accessToken");
-    if (cookie) {
-      fetch(API+"auth/auto_login", {
-        method: "PUT",
-        headers: {"Authorization": `${cookie}` },
-      })
-        .then((res) => res.json())
-        .then((data) => setUser(data?.result));
+    try {
+      if (cookie) {
+        fetch(API + "auth/auto_login", {
+          method: "PUT",
+          headers: { Authorization: `${cookie}` },
+        })
+          .then((res) => res.json())
+          .then((data) => setUser(data?.result));
+      }
+    } catch (error) {
+      setUser({});
     }
   }, []);
 
@@ -47,4 +71,4 @@ function GetUser() {
 function removeCookie() {
   setCookie("accessToken", "", -1);
 }
-export { setCookie, getCookie, GetUser, removeCookie };
+export { setCookie, getCookie, GetUser, removeCookie, getCachedUser };
