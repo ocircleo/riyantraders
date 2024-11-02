@@ -14,8 +14,8 @@ const Footer = () => {
                        <h2 className=" text-3xl font-bold "><span className="text-gray-400">Ryan</span> <span className="text-red-600">Traders</span> </h2>
             </Link>
           </span>
-            <p className="text-gray-400">An website for Hosting files and Software.</p>
-            <p className="text-gray-400">Just create an account and start uploading apps and files</p>
+            <p className="text-gray-400">An website for Selling laptops.</p>
+            <p className="text-gray-400">Create an account and order a laptop now !!!</p>
           </div>
 
           {/* Useful Links */}
@@ -33,13 +33,13 @@ const Footer = () => {
           <div className="w-full sm:w-1/3">
             <h3 className="text-lg font-semibold text-white mb-4">Contact Us</h3>
             <p className="mb-2">123 Digital Avenue, Creative City</p>
-            <p className="mb-2">Email: support@yourbrand.com</p>
+            <p className="mb-2">Email: bd.raiyantraders@gmail.com</p>
             <p>Phone: (123) 456-7890</p>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row justify-between items-center border-t border-gray-700 mt-8 pt-6">
-          <p className="text-sm text-gray-400">&copy; 2024 YourBrand. All rights reserved.</p>
+          <p className="text-sm text-gray-400">&copy; 2024 RaiyanTraders. All rights reserved.</p>
 
           {/* Social Icons */}
           <div className="flex space-x-4 mt-4 sm:mt-0">

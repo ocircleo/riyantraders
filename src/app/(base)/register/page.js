@@ -35,7 +35,6 @@ const Register = () => {
       return;
     }
     setCookie("accessToken", data?.token, 3);
-    setAuthInfo(data);
     router.replace("/dashboard");
   };
   return (

@@ -1,24 +1,22 @@
 "use client";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { getCachedUser } from "../utls/cookie/Cookie";
+import getUser from "../utls/db/UserDB";
 
 const Dashboard = () => {
-  let [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
+
   useEffect(() => {
-    const getUser = async () => {
-      const temUser = await getCachedUser();
-      setUser(temUser);
-      console.log("from /dashboard: ",temUser);
-    };
-    getUser();
+    (async function () {
+      let temUser = await getUser();
+      if (temUser) setUser(temUser);
+    })();
   }, []);
 
   return (
     <div className="bg-white w-full h-full font-semibold flex-col gap-3">
       <p className=""> Welcome to Dashboard</p>
-      <p>name: {user?.name}</p>
-      <p>name: {user?.role}</p>
+      <p>Name: {user?.name}</p>
+      <p>Role: {user?.role}</p>
     </div>
   );
 };

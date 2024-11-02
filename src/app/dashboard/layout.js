@@ -2,17 +2,16 @@
 import React, { useEffect, useState } from "react";
 import nav from "./nav.module.css";
 import ActiveLink from "@/app/utls/ActiveLink/ActiveLink";
-import { getCachedUser } from "../utls/cookie/Cookie";
-import Loading from "../utls/loading/Loading";
+import getUser from "../utls/db/UserDB";
+
 const Layout = ({ children }) => {
   const [navState, setNavState] = useState(false);
-  let [user, setUser] = useState({ loading: true, data: {} });
+  const [user, setUser] = useState(null);
   useEffect(() => {
-    const getUser = async () => {
-      const temUser = await getCachedUser();
-      setUser({ loading: false, data: temUser?.result });
-    };
-    getUser();
+    (async function () {
+      let temUser = await getUser();
+      if (temUser) setUser(temUser);
+    })();
   }, []);
   const toggleNav = () => setNavState(!navState);
   const baseLinks = [
@@ -28,18 +27,17 @@ const Layout = ({ children }) => {
     { path: "/dashboard", text: "Dashboard" },
     { path: "/dashboard/addItem", text: "Add Item" },
     { path: "/dashboard/editItem", text: "Edit Item" },
-    { path: "/dashboard/stats", text: "Statistics" },
+    { path: "/dashboard/statistics", text: "Statistics" },
     { path: "/dashboard/users", text: "Users" },
     { path: "/dashboard/messages", text: "Messages" },
     { path: "/dashboard/editProfile", text: "Edit Profile" },
     { path: "/dashboard/changePassword", text: "change password" },
     { path: "/", text: "Home page" },
   ];
-
-  if (user?.loading)
+  if (!user)
     return (
-      <div>
-        <Loading></Loading>
+      <div className="grid place-content-center h-screen w-full">
+        <h2 className="text-xl font-semibold">Loading Dashboard.....</h2>
       </div>
     );
   return (
@@ -48,7 +46,7 @@ const Layout = ({ children }) => {
     >
       {/* Big screen sidebar links below */}
       <div className="hidden md:w-64 bg-stone-200 h-full overflow-y-scroll md:flex flex-col gap-2 ps-4 pe-1 pt-3 pb-12 rounded scroll-rock">
-        {user?.data?.role == "admin"
+        {user?.role == "admin"
           ? adminLinks.map((ele, index) => (
               <ActiveLink
                 toggle={null}
@@ -64,7 +62,7 @@ const Layout = ({ children }) => {
                 toggle={null}
                 key={ele.path + index + ele.text}
                 to={ele.path}
-                click={toggleNav}
+                click={null}
               >
                 {ele.text}
               </ActiveLink>
@@ -73,9 +71,10 @@ const Layout = ({ children }) => {
       {/* small screen sidebar links below */}
       <div
         className={`md:hidden top-0 w-full sm:w-64 bg-stone-300 h-full  flex flex-col gap-2 px-2 pt-3 pb-12 fixed duration-100 ${
-          !navState ? "-left-full sm:-left-64" : "left-0"} z-20`}
+          !navState ? "-left-full sm:-left-64" : "left-0"
+        } z-20`}
       >
-        {user?.data?.role == "admin"
+        {user?.role == "admin"
           ? adminLinks.map((ele, index) => (
               <ActiveLink
                 toggle={null}

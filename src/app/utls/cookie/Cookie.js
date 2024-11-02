@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { API } from "../api/API";
 
 const setCookie = (key, value, day) => {
+  removeCookie();
   // Set a cookie with an expiration date
   let date = new Date();
   date.setTime(date.getTime() + day * 24 * 60 * 60 * 1000); //days from now
@@ -31,7 +32,7 @@ function getCookie(name) {
 let user_cached = {};
 async function getCachedUser() {
   if (user_cached.phone) return user_cached;
-  console.log("not cached: ", user_cached); 
+  console.log("not cached: ", user_cached);
   let cookie = getCookie("accessToken");
   try {
     if (cookie) {
@@ -69,6 +70,6 @@ function GetUser() {
   return [user, setUser];
 }
 function removeCookie() {
-  setCookie("accessToken", "", -1);
+  document.cookie = `accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 }
 export { setCookie, getCookie, GetUser, removeCookie, getCachedUser };

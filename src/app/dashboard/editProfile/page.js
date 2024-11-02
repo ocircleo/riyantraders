@@ -1,31 +1,60 @@
 "use client";
-import { getCachedUser } from "@/app/utls/cookie/Cookie";
+import { API } from "@/app/utls/api/API";
+import { getCookie } from "@/app/utls/cookie/Cookie";
+import getUser from "@/app/utls/db/UserDB";
 import NextPrev from "@/app/utls/nextprev/NextPrev";
 import NextPrevFunc from "@/app/utls/nextprev/NextPrevFun";
-import Link from "next/link";
+import Popup from "@/app/utls/popup/Popup";
+import UsePopup from "@/app/utls/popup/usePopup";
 import React, { useEffect, useState } from "react";
 
 const Page = () => {
-  let [user, setUser] = useState({ loading: true, data: {} });
+  let [user, setUser] = useState(null);
+  const [popup, closePopup, showPopup, showPopupError, askPopup] = UsePopup();
   useEffect(() => {
-    const getUser = async () => {
-      const temUser = await getCachedUser();
-      setUser({ loading: false, data: temUser });
-    };
-    getUser();
+    (async function () {
+      let temUser = await getUser();
+      if (temUser) setUser(temUser);
+    })();
   }, []);
-  if (user.loading)
-    return (
-      <div className="bg-stone-200/80 min-h-full px-6 py-3 flex items-center justify-center w-full">
-        <p className="text-2xl font-semibold">Loading Please Wait...</p>
-      </div>
-    );
+  const submit = async (e) => {
+    try {
+      e.preventDefault();
+      let form = e.target;
+      let name, city, address, phone, email;
+      name = form.name.value;
+      city = form.city.value;
+      address = form.address.value;
+      phone = form.phone.value;
+      email = form.email.value;
+      let data = { name, city, address, phone, email };
+      const res = await fetch(API + "user/update_profile", {
+        method: "PUT",
+        headers: {
+          "content-type": "application/json",
+          authorization: getCookie("accessToken"),
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json();
+      console.log(result);
+      if (result.error) showPopupError(result.message);
+      else showPopup(result.message);
+    } catch (error) {
+      console.log(error);
+      showPopupError(error.message);
+    }
+  };
   return (
-    <div className="bg-stone-200/80 min-h-full px-6 py-3 ">
+    <div className="bg-stone-200/80 min-h-full px-6 py-3 relative">
+      {popup.is && <Popup popup={popup} closePopup={closePopup}></Popup>}
       <h2 className=" text-stone-800 font-bold border-b-2 border-dashed border-b-stone-500 mb-3 text-xl pt-2 pb-5">
         Edit your profile
       </h2>
-      <form className=" grid grid-cols-1 lg:grid-cols-2 gap-3">
+      <form
+        onSubmit={submit}
+        className=" grid grid-cols-1 lg:grid-cols-2 gap-3"
+      >
         <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded">
           <label htmlFor="name" className="font-bold">
             User Name
@@ -33,9 +62,10 @@ const Page = () => {
           <input
             type="text"
             id="name"
+            name="name"
             className=" py-3 px-2 bg-white rounded outline-indigo-500"
             placeholder="your name"
-            defaultValue={user.data?.name}
+            defaultValue={user?.name}
           ></input>
         </fieldset>
         <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded">
@@ -45,9 +75,10 @@ const Page = () => {
           <input
             type="text"
             id="city"
+            name="city"
             className=" py-3 px-2 bg-white rounded outline-indigo-500"
             placeholder="City or zila you live in"
-            defaultValue={user.data?.city}
+            defaultValue={user?.city}
           ></input>
         </fieldset>
         <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded">
@@ -57,9 +88,10 @@ const Page = () => {
           <input
             type="text"
             id="address"
+            name="address"
             className=" py-3 px-2 bg-white rounded outline-indigo-500"
             placeholder="From where you want to pick up orders"
-            defaultValue={user.data?.address}
+            defaultValue={user?.address}
           ></input>
         </fieldset>
         <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded">
@@ -70,9 +102,10 @@ const Page = () => {
             disabled
             type="text"
             id="email"
+            name="email"
             className=" py-3 px-2 bg-white rounded outline-indigo-500"
             placeholder="your Email"
-            defaultValue={user.data?.email}
+            defaultValue={user?.email}
             title="You Can't Edit Email"
           ></input>
         </fieldset>
@@ -84,17 +117,17 @@ const Page = () => {
             disabled
             type="text"
             id="phone"
+            name="phone"
             className=" py-3 px-2 bg-white outline-indigo-500 rounded"
             placeholder="Phone number"
-            defaultValue={user.data?.phone}
+            defaultValue={user?.phone}
             title="You Can't Edit Phone"
           ></input>
         </fieldset>
         <div className="mt-6 col-span-2 flex items-center justify-center ">
-        <button className="bg-red-600 w-full lg:w-1/2 text-white font-semibold py-3 rounded  hover:bg-indigo-400 active:scale-95 duration-100">
-          Update Password
-        </button>
-
+          <button className="bg-green-500 full lg:w-1/2 text-white font-semibold py-3 rounded  hover:bg-indigo-400 active:scale-95 duration-100">
+            Update Information
+          </button>
         </div>
       </form>
       <NextPrev

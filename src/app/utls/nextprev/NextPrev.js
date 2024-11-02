@@ -10,8 +10,8 @@ const NextPrev = ({ info }) => {
   //   };
   return (
     <div>
-      <div className="h-[3px] my-8 border-b-2 border-gray-500/40 w-full border-dashed"></div>
-      <div className=" px-12 mt-2 py-4 flex justify-between items-center ">
+      <div className="h-[3px] my-8 border-b-2 border-gray-500/40 w-full border-dashed "></div>
+      <div className=" px-12 mt-2 py-4 gap-3 flex sm:flex-row flex-col text-center justify-between items-center ">
         <div className="">
           <p className="text-sm">Previous</p>
           <Link

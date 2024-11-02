@@ -1,22 +1,32 @@
-'use client'
+"use client"
 import Link from "next/link";
 import ActiveNavLink from "../ActiveLink/ActiveNavLink";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ActiveLink from "../ActiveLink/ActiveLink";
 import nav from "./nav.module.css";
 import Image from "next/image";
-import { GetUser, removeCookie } from "../cookie/Cookie";
 import Search from "../searchbar/Search";
 import cart from "/public/cart.png"
 import account from "/public/account.png"
 import logo from "/public/logo.png"
+import getUser, { clearUser } from "../db/UserDB";
+import { API } from "../api/API";
+import { getCookie } from "../cookie/Cookie";
 const Navbar = () => {
   const [navState, setNavState] = useState(false)
-  let [user, setUser] = GetUser()
+  const [user, setUser] = useState(null);
+
   const logOut = () => {
-    removeCookie('accessToken')
-    setUser({})
-  }
+    clearUser();
+    setUser(null);
+  };
+
+  useEffect(() => {
+    (async function () {
+      let temUser = await getUser();
+      if (temUser) setUser(temUser);
+    })();
+  }, []);
   const navLinks = [
     {
       to: "/",
@@ -36,7 +46,6 @@ const Navbar = () => {
 
   ];
   const toggleNav = () => setNavState(!navState)
-
   return (
     <>
       <nav className="h-16 w-full bg-white/30 backdrop-blur-md  flex justify-between items-center px-4 md:px-6 lg:px-10 gap-2 shadow z-[111]">
@@ -55,10 +64,23 @@ const Navbar = () => {
               <p className="absolute -top-2 text-sm font-semibold -right-2 bg-red-500 rounded-full min-w-5 text-center px-1 text-white">0</p>
             </Link>
 
-            <div className="flex gap-2 ms-4 p-2 border border-red-100  rounded">
-
-              {user?.email ? <div className="flex items-center gap-2"> <ActiveNavLink to={"/dashboard"}>Dashboard</ActiveNavLink> <span className="text-red-600">|</span> <button className="bg-red-500 text-white px-3 py-1 rounded" onClick={logOut}>Log Out</button></div> : <> <ActiveNavLink to={"/login"}>Login</ActiveNavLink> <span className="text-red-600">|</span>
-                <ActiveNavLink to={"/register"}>Register</ActiveNavLink></>}
+            <div className="hidden md:flex gap-2 ms-4 p-2 border border-red-100  rounded">
+              {
+                user ? <div className="flex items-center gap-2">
+                  <ActiveNavLink to="/dashboard">{user.name}</ActiveNavLink>
+                  <span className="text-red-600">|</span>
+                  <button
+                    className="bg-red-500 text-white px-3 py-1 rounded"
+                    onClick={logOut}
+                  >
+                    Log Out
+                  </button>
+                </div> : <>
+                  <ActiveNavLink to="/login">Login</ActiveNavLink>
+                  <span className="text-red-600">|</span>
+                  <ActiveNavLink to="/register">Register</ActiveNavLink>
+                </>
+              }
             </div>
           </div>
           <Link href="/cart" className="h-8 w-8 relative   rounded p-2 md:hidden">
@@ -122,10 +144,23 @@ const Navbar = () => {
             Search
           </ActiveLink>
           <div
-            className={` flex gap-2 flex-col`}
+            className={` flex md:hidden gap-2 flex-col`}
           >
-            {user?.email ? <> <ActiveLink to={"/dashboard"}>Dashboard</ActiveLink> <button className="bg-red-500 text-black px-3 py-2 rounded font-semibold shadow-inner" onClick={logOut}>Log Out</button></> : <> <ActiveLink to={"/login"}>Login</ActiveLink>
-              <ActiveLink to={"/register"}>Register</ActiveLink></>}
+            {
+              user ? <>
+                <Link href="/dashboard">{user.name}</Link>
+                <button
+                  className="bg-red-500 text-black px-3 py-1 rounded font-semibold shadow-inner"
+                  onClick={logOut}
+                >
+                  Log Out
+                </button>
+              </> : <>
+                <ActiveLink to="/login">Login</ActiveLink>
+                <ActiveLink to="/register">Register</ActiveLink>
+              </>
+
+            }
           </div>
         </div>
       </div>
@@ -135,13 +170,3 @@ const Navbar = () => {
 
 
 export default Navbar;
-
-
-
-{/* <span className=" md:flex gap-4 hidden"> */ }
-{/* {navLinks.map((ele) => (
-              <ActiveNavLink to={ele.to} key={ele.id}>
-              {ele.title}
-              </ActiveNavLink>
-              ))} */}
-{/* </span> */ }
