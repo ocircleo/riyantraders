@@ -5,7 +5,7 @@ const User = ({ index, currentPage, data }) => {
     let newIndex = (currentPage * 12) + 1 + index
 
     return (
-        <div className={`grid grid-cols-12 text-xs sm:text-sm md:text-base p-2 justify-items-center ${index % 2 == 0 ? "bg-white" : "bg-gray-100"}`}>
+        <div className={`grid grid-cols-12 text-xs sm:text-sm md:text-base p-2 justify-items-center ${index % 2 == 0 ? "bg-white" : "bg-gray-100"} ${data.role == "admin"?"font-semibold border border-black":""}`}>
             <div className="col-span-1">
                 {newIndex}
             </div>

@@ -3,7 +3,6 @@ import { useEffect } from "react";
 
 
 const Popup = ({ popup, closePopup }) => {
-
     useEffect(() => {
         if (document) document.body.style.overflowY = "hidden";
         return () => { if (document) document.body.style.overflowY = "auto" };
@@ -26,7 +25,7 @@ const Popup = ({ popup, closePopup }) => {
                             </span>
 
 
-                        </> : <button onClick={closePopup} className={`${popup?.error ? "bg-red-600 " : "bg-green-400"} rounded px-4 py-1  text-white font-semibold active:scale-90 duration-75 z-10`}>
+                        </> : <button onClick={closePopup} className={`${popup?.error ? "bg-red-600 " : "bg-green-500"} rounded px-4 py-1  text-white font-semibold active:scale-90 duration-75 z-10`}>
                             Close
                         </button>
                     }

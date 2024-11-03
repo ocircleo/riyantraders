@@ -3,165 +3,147 @@ import { API } from "@/app/utls/api/API";
 import { getCookie } from "@/app/utls/cookie/Cookie";
 import Popup from "@/app/utls/popup/Popup";
 import UsePopup from "@/app/utls/popup/usePopup";
-import { textWash } from "@/app/utls/searchbar/TextFilter";
-import React, { useState } from "react";
-import { useRouter } from 'next/navigation'
-const Form = ({ data }) => {
-    const [popup, closePopup, showPopup, showPopupError, askPopup] = UsePopup(); const router = useRouter()
-    const editUser = async (e) => {
-        e.preventDefault();
-        // newModel is an exact replica of laptop model in db
-        let newModel = {
-            _id: data._id,
-            dataUrl: data.dataUrl || GenerateDataUrl(textWash(e.target.Brand.value), textWash(e.target.laptopModel.value)),
-            laptop: {
-                brand: textWash(e.target.Brand.value),
-                model: textWash(e.target.laptopModel.value),
-                price: textWash(e.target.price.value),
-                stock: textWash(e.target.stock.value),
-            },
-            processor: {
-                brand: textWash(e.target.processorBrand.value),
-                model: textWash(e.target.processorModel.value),
-                core: textWash(e.target.processorCore.value),
-            },
-            display: {
-                size: textWash(e.target.displaySize.value),
-                type: textWash(e.target.displayType.value),
-                resolution: textWash(e.target.displayResolution.value),
-                touchScreen: textWash(e.target.touchScreen.value),
-                features: textWash(e.target.displayFeatures.value),
-            },
-            memory: {
-                ram: textWash(e.target.ram.value),
-                ramType: textWash(e.target.ramType.value),
-                removable: textWash(e.target.removable.value),
-            },
-            storage: {
-                type: textWash(e.target.storageType.value),
-                capacity: textWash(e.target.storageCapacity.value),
-                upgradeOptions: textWash(e.target.storageUpgrade.value),
-            },
-            graphics: {
-                model: textWash(e.target.graphicsModel.value),
-                memory: textWash(e.target.graphicsMemory.value),
-            },
-            keyboardAndTouchpad: {
-                keyboard: {
-                    type: textWash(e.target.keyboardType.value),
-                    features: textWash(e.target.keyboardFeatures.value),
-                },
-                touchpad: textWash(e.target.touchPad.value),
-            },
-            cameraAndAudio: {
-                webcam: textWash(e.target.webcam.value),
-                speaker: textWash(e.target.speaker.value),
-                microphone: textWash(e.target.microphone.value),
-                audioFeatures: textWash(e.target.audioFeatures.value),
-            },
-            portsAndSlots: {
-                cardReader: textWash(e.target.cardReader.value),
-                hdmiPort: textWash(e.target.hdmiPort.value),
-                usbTypeC: textWash(e.target.usbTypeC.value),
-                headphoneJack: textWash(e.target.headphoneJack.value),
-            },
-            networkAndConnectivity: {
-                wifi: textWash(e.target.wifi.value),
-                bluetooth: textWash(e.target.bluetooth.value),
-            },
-            security: {
-                fingerprintSensor: textWash(e.target.fingerprintSensor.value),
-            },
-            operatingSystem: textWash(e.target.operatingSystem.value),
-            power: {
-                batteryType: textWash(e.target.batteryType.value),
-                batteryCapacity: textWash(e.target.batteryCapacity.value),
-                adapterType: textWash(e.target.adapterType.value),
-            },
-            physicalSpecification: {
-                color: textWash(e.target.color.value),
-                dimensions: {
-                    height: textWash(e.target.height.value),
-                    width: textWash(e.target.width.value),
-                    depth: textWash(e.target.depth.value),
-                },
-                weight: textWash(e.target.weight.value),
-            },
-            warranty: textWash(e.target.warrantyDetails.value),
-            publishDate: data.publishDate
-        };
-        newModel = JSON.stringify(newModel);
+let url;
+const Form = ({ loading, data, error, setData }) => {
+    const [popup, closePopup, showPopup, showPopupError, askPopup] = UsePopup();
+    const makeRequest = async () => {
+        closePopup();
         try {
-            const response = await fetch(API + "admin/update_product", {
+            const result = await fetch(API + url, {
                 method: "PUT",
                 headers: {
                     "content-type": "application/json",
-                    authorization: getCookie("accessToken"),
+                    "authorization": getCookie("accessToken")
                 },
-                body: newModel,
-            });
-            const result = await response.json();
-            if (result.error) return showPopupError(result.message)
-            showPopup(result.message)
+                body: JSON.stringify({ id: data._id })
+            })
+            const res = await result.json()
+            if (res.error) showPopupError(res.message);
+            else {
+                showPopup(res.message);
+                setData({ loading: false, data: res.result, error: false })
+            }
         } catch (error) {
-            showPopupError(error.message)
-            console.error(error);
+            showPopupError(error.message);
+            console.log(error);
         }
-    };
-    const deleteUser = async () => {
-        closePopup();
-        try {
-            const response = await fetch(API + "admin/delete_product", {
-                method: "DELETE",
-                headers: {
-                    "content-type": "application/json",
-                    authorization: getCookie("accessToken"),
-                },
-                body: JSON.stringify({ id: data._id }),
-            });
-            const result = await response.json();
-            if (result) router.back()
-            else showPopupError(result.message)
-
-        } catch (error) {
-            showPopupError(error.message)
-            console.error(error);
-        }
-
     }
-    const deleteBtn = () => askPopup("Are you sure you want to delete ?", deleteUser);
+    const makeAdmin = () => { askPopup("Add user to admin ?", makeRequest), url = "admin/make_admin" };
+    const removeAdmin = () => { askPopup("Remove user from admin ?", makeRequest), url = "admin/remove_admin" }
+    const enableUser = () => { askPopup("Enable User ?", makeRequest), url = "admin/enable_user" }
+    const disableUser = () => { askPopup("Add user to admin ?", makeRequest), url = "admin/disable_user" }
+
+
+    if (loading) return (<div className="text-center py-12 font-semibold">
+        <p>Loading. Please wait.....</p>
+    </div>)
+    if (error) return (<div className="text-center py-12 font-semibold">
+        <p>Opps ! Some error happened while loading data. <br></br> Please refresh</p>
+    </div>)
     return (
         <>
             {popup.is && <Popup popup={popup} closePopup={closePopup}></Popup>}
-            <form className="grid  grid-cols-2 gap-3" onSubmit={editUser}>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="warrantyDetails" className="font-bold">
-                        Warranty Details <span className="text-red-500">*</span>
+            <form
+                className=" grid grid-cols-1 lg:grid-cols-2 gap-3"
+            >
+                <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded">
+                    <label htmlFor="name" className="font-bold">
+                        User Name
                     </label>
                     <input
+                        disabled
                         type="text"
-                        id="warrantyDetails"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Warranty details | ex: 1 Year international warranty"
-                        required
-                    // defaultValue={data.warranty}
+                        id="name"
+                        name="name"
+                        className=" py-3 px-2 bg-white rounded outline-indigo-500"
+                        placeholder="your name"
+                        defaultValue={data?.name}
                     ></input>
                 </fieldset>
-
-                <div className="mt-6 col-span-2 flex items-center justify-center gap-8">
-                    <button
-                        className={`bg-green-500 w-full lg:w-1/2 text-white font-semibold py-3 rounded  hover:bg-indigo-400 active:scale-95 duration-100`}
-                    >
-                        Update Laptop
-                    </button>
-                    <button onClick={deleteBtn} type="button"
-                        className={`bg-red-500 w-full lg:w-1/2 text-white font-semibold py-3 rounded  hover:bg-indigo-400 active:scale-95 duration-100`}
-                    >
-                        Delete Laptop
-                    </button>
-                </div>
+                <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded">
+                    <label htmlFor="city" className="font-bold">
+                        City / Zila
+                    </label>
+                    <input
+                        disabled
+                        type="text"
+                        id="city"
+                        name="city"
+                        className=" py-3 px-2 bg-white rounded outline-indigo-500"
+                        placeholder="City or zila you live in"
+                        defaultValue={data?.city}
+                    ></input>
+                </fieldset>
+                <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded">
+                    <label htmlFor="address" className="font-bold">
+                        Delivery address
+                    </label>
+                    <input
+                        disabled
+                        type="text"
+                        id="address"
+                        name="address"
+                        className=" py-3 px-2 bg-white rounded outline-indigo-500"
+                        placeholder="From where you want to pick up orders"
+                        defaultValue={data?.address}
+                    ></input>
+                </fieldset>
+                <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded">
+                    <label htmlFor="email" className="font-bold">
+                        Email
+                    </label>
+                    <input
+                        disabled
+                        type="text"
+                        id="email"
+                        name="email"
+                        className=" py-3 px-2 bg-white rounded outline-indigo-500"
+                        placeholder="your Email"
+                        defaultValue={data?.email}
+                        title="You Can't Edit Email"
+                    ></input>
+                </fieldset>
+                <fieldset className="flex flex-col gap-2 p-2  rounded">
+                    <label htmlFor="phone" className="font-bold">
+                        Phone Number
+                    </label>
+                    <input
+                        disabled
+                        type="text"
+                        id="phone"
+                        name="phone"
+                        className=" py-3 px-2 bg-white outline-indigo-500 rounded"
+                        placeholder="Phone number"
+                        defaultValue={data?.phone}
+                        title="You Can't Edit Phone"
+                    ></input>
+                </fieldset>
+                <fieldset className="flex flex-col gap-2 p-2  rounded">
+                    <label htmlFor="role" className="font-bold">
+                        User Role
+                    </label>
+                    <div
+                        className=" py-3 px-2 bg-black text-blue-600 capitalize font-semibold outline-indigo-500 rounded text-center"
+                        title="You Can't Edit Phone"
+                    >{data?.role}</div>
+                </fieldset>
             </form>
+            <div className="mt-6 col-span-2 gap-3 flex items-center justify-around ">
+                {data?.role == "admin" ? <button onClick={removeAdmin} className="bg-green-500 px-5 hover:px-8 text-white font-semibold py-2 rounded   active:scale-95 duration-100">
+                    Remove Admin
+                </button> : <button onClick={makeAdmin} className="bg-green-500 px-5 hover:px-8 text-white font-semibold py-2 rounded   active:scale-95 duration-100">
+                    Make Admin
+                </button>}
+                {
+                    data?.disabled ? <button onClick={enableUser} className="bg-orange-500 px-5 hover:px-8 text-white font-semibold py-2 rounded   active:scale-95 duration-100">
+                        Enable User
+                    </button> : <button onClick={disableUser} className="bg-orange-500 px-5 hover:px-8 text-white font-semibold py-2 rounded   active:scale-95 duration-100">
+                        Disable User
+                    </button>
+                }
+
+
+            </div>
         </>
     );
 };

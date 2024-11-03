@@ -4,14 +4,17 @@ import NextPrev from "@/app/utls/nextprev/NextPrev";
 import NextPrevFunc from "@/app/utls/nextprev/NextPrevFun";
 import { useEffect, useRef, useState } from "react";
 import Pagination from "@/app/utls/pagination/Paginate";
-import { getSingleUserBlock, setMultiUser, setSingleUserBlock } from "@/app/utls/db/UsersDB";
+import {
+  getSingleUserBlock,
+  setMultiUser,
+  setSingleUserBlock,
+} from "@/app/utls/db/UsersDB";
 import User from "./User";
 
 const Page = () => {
   const [users, setUsers] = useState({ loading: true, data: [] });
   const [pages, setPages] = useState({ current: 0, length: 0 });
   const formRef = useRef(null);
-
 
   const fetchData = async (key, city, page) => {
     setUsers({ loading: true, data: [] });
