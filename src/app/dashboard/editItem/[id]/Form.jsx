@@ -1,11 +1,12 @@
 "use client";
 import { API } from "@/app/utls/api/API";
 import { getCookie } from "@/app/utls/cookie/Cookie";
+import { deleteImage } from "@/app/utls/fireFunctions/delete";
 import Popup from "@/app/utls/popup/Popup";
 import UsePopup from "@/app/utls/popup/usePopup";
 import { textWash } from "@/app/utls/searchbar/TextFilter";
-import React, { useState } from "react";
 import { useRouter } from 'next/navigation'
+
 const Form = ({ data }) => {
     const [popup, closePopup, showPopup, showPopupError, askPopup] = UsePopup(); const router = useRouter()
     const editItem = async (e) => {
@@ -90,6 +91,8 @@ const Form = ({ data }) => {
             warranty: textWash(e.target.warrantyDetails.value),
             publishDate: data.publishDate
         };
+        console.log(newModel.physicalSpecification);
+        // return;
         newModel = JSON.stringify(newModel);
         try {
             const response = await fetch(API + "admin/update_product", {
@@ -101,6 +104,7 @@ const Form = ({ data }) => {
                 body: newModel,
             });
             const result = await response.json();
+            console.log(result.result.physicalSpecification);
             if (result.error) return showPopupError(result.message)
             showPopup(result.message)
         } catch (error) {
@@ -108,8 +112,14 @@ const Form = ({ data }) => {
             console.error(error);
         }
     };
+
     const deleteItem = async () => {
         closePopup();
+        for (let item of data.images) {
+            console.log({ item });
+            let res = await deleteImage(item)
+            console.log(res);
+        }
         try {
             const response = await fetch(API + "admin/delete_product", {
                 method: "DELETE",

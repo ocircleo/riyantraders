@@ -70,6 +70,9 @@ function GetUser() {
   return [user, setUser];
 }
 function removeCookie() {
-  document.cookie = `accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  const paths = ['/', '/user', '/dashboard']; // Add other specific paths where the cookie may have been set.
+  paths.forEach(path => {
+      document.cookie = `accessToken=; path=${path}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  });
 }
 export { setCookie, getCookie, GetUser, removeCookie, getCachedUser };

@@ -6,8 +6,11 @@ import { textWash } from "@/app/utls/searchbar/TextFilter";
 import { API } from "@/app/utls/api/API";
 import { getCookie } from "@/app/utls/cookie/Cookie";
 import UsePopup from "@/app/utls/popup/usePopup";
+import { useRouter } from "next/navigation";
+
 const Page = () => {
-  const [popup, closePopup, showPopup, showPopupError] = UsePopup();
+  const [popup, closePopup, showPopup, showPopupError, askPopup] = UsePopup();
+  const router = useRouter();
 
   //function to submit form to add a new laptop to database -- below
   const addItem = async (e) => {
@@ -100,7 +103,15 @@ const Page = () => {
         body: newModel,
       });
       const result = await response.json();
-      showPopup(result.message);
+      const gotoImageUpload = () => {
+        const link = "/dashboard/upload-image/" + result.result._id;
+        router.push(link);
+      };
+      if (!result.error) {
+        askPopup("Item Added successfully, Add Images ?", gotoImageUpload);
+        return;
+      }
+      showPopupError(result.message);
     } catch (error) {
       console.error(error);
       showPopupError(error.message);

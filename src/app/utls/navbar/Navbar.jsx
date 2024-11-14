@@ -48,10 +48,10 @@ const Navbar = () => {
   const toggleNav = () => setNavState(!navState)
   return (
     <>
-      <nav className="h-16 w-full bg-white/30 backdrop-blur-md  flex justify-between items-center px-4 md:px-6 lg:px-10 gap-2 shadow z-[111]">
+      <nav className="h-16 w-full fixed top-0 bg-white/30 backdrop-blur-md  flex justify-between items-center px-4 md:px-6 lg:px-10 gap-2 shadow z-[111]">
         <Link href={"/"} className="relative flex items-center  flex-col">
           {/* <Image alt="Tooltip logo" src={logo} className="h-8 w-16 bg-white "></Image> */}
-          <span className="text-xl sm:text-2xl lg:text-3xl font-bold "><span className="text-gray-700">Ryan</span> <span className="text-red-600">Traders</span> </span>
+          <span className="text-xl sm:text-2xl lg:text-3xl font-bold "><span className="text-gray-700">Raiyan</span> <span className="text-red-600">Traders</span> </span>
         </Link>
 
         <Search text={""} invisible={"sm"}></Search>
@@ -107,7 +107,7 @@ const Navbar = () => {
 
 
       </nav >
-      {/* <div className="h-16 w-full bg-white"></div> */}
+      <div className="h-16 w-full bg-white"></div>
       {/* //Small Screen  sidebar -- below */}
       <div
         onClick={() => setNavState(!navState)}

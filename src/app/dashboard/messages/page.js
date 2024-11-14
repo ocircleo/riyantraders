@@ -7,7 +7,7 @@ const Messages = () => {
     <div className="bg-stone-200/80 min-h-full px-6 py-3 flex justify-between flex-col">
       <div>
         <h2 className=" text-stone-800 font-bold border-b-2 border-dashed border-b-stone-500 mb-3 text-xl pt-2 pb-5">
-          Messages
+          Messages Phase 2
         </h2>
 
         <div className="border border-gray-300 rounded p-2 bg-stone-200 relative mt-10">
