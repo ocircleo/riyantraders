@@ -11,7 +11,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { useRouter } from "next/navigation";
-import React, {useRef } from "react";
+import React, { useRef } from "react";
 const ImageFrom = ({ data, imgUrl, targetIndex }) => {
   const router = useRouter();
   const imgRef = useRef(null);
@@ -34,11 +34,12 @@ const ImageFrom = ({ data, imgUrl, targetIndex }) => {
       return;
     }
     type = file.type;
-    // extension = file.name.split(".");
-    // extension = extension[extension.length - 1];
-    // name = data.laptop.model + Date.now() + "." + extension;
-    name = Date.now() + textWash(file.name);
-    name = name.replaceAll("-", "_");
+    let extension = file.name.split(".");
+    extension = extension[extension.length - 1];
+    console.log(extension);
+    name = `${Date.now()}x${Math.random()
+      .toString(36)
+      .slice(2, 11)}.${extension}`;
     console.log(name);
     const filePath = mainUrlPart ? mainUrlPart : "rt_images/" + name;
     const storageRef = ref(storage, filePath);
@@ -101,22 +102,38 @@ const ImageFrom = ({ data, imgUrl, targetIndex }) => {
         mainUrlPart = mainUrlPart.replace("%2f", "/");
       }
       const storageRef = ref(storage, mainUrlPart);
-      deleteObject(storageRef).then(async () => {
-        console.log("Image successfully deleted");
-        let update = { id: data._id, url: imgUrl };
-        const res = await fetch(API + "admin/delete-image", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: getCookie("accessToken"),
-          },
-          body: JSON.stringify(update),
+      deleteObject(storageRef)
+        .then(async () => {
+          console.log("Image successfully deleted");
+          let update = { id: data._id, url: imgUrl };
+          const res = await fetch(API + "admin/delete-image", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: getCookie("accessToken"),
+            },
+            body: JSON.stringify(update),
+          });
+          const result = await res.json();
+          if (!result.error) router.refresh();
+        })
+        .catch(async (error) => {
+          if (error.code == "storage/object-not-found") {
+            let update = { id: data._id, url: imgUrl };
+            const res = await fetch(API + "admin/delete-image", {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: getCookie("accessToken"),
+              },
+              body: JSON.stringify(update),
+            });
+            const result = await res.json();
+            if (!result.error) router.refresh();
+          }
         });
-        const result = await res.json();
-        if (!result.error) router.refresh();
-      });
     } catch (error) {
-      console.log(error.message);
+      console.log(error.code);
     }
   };
   return (

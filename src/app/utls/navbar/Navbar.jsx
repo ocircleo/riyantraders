@@ -7,11 +7,9 @@ import nav from "./nav.module.css";
 import Image from "next/image";
 import Search from "../searchbar/Search";
 import cart from "/public/cart.png"
-import account from "/public/account.png"
 import logo from "/public/logo.png"
 import getUser, { clearUser } from "../db/UserDB";
-import { API } from "../api/API";
-import { getCookie } from "../cookie/Cookie";
+
 const Navbar = () => {
   const [navState, setNavState] = useState(false)
   const [user, setUser] = useState(null);

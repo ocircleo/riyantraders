@@ -38,7 +38,7 @@ const Sidebar = ({ request }) => {
                 <Form query={request}></Form>
             </div>
             {/* Large Screen sidebar */}
-            <div className='bg-white shadow  border p-2 w-0 hidden lg:flex lg:flex-col gap-4 lg:w-80 sticky top-[4.5rem] overflow-y-scroll duration-100 h-fit scroll-rock-sm '>
+            <div className='bg-white shadow  border p-2 w-0 hidden lg:flex lg:flex-col gap-4 lg:w-80 sticky top-[4.5rem] duration-100 h-fit scroll-rock-sm '>
                 <p className='font-semibold text-lg px-2 py-2 border-b-2 border-gray-300'>Filters</p>
                 <Form query={request} sm={0}></Form>
             </div>

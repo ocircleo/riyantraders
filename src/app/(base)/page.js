@@ -2,7 +2,7 @@ import Link from "next/link";
 import Home from "./home/Home";
 
 let apps = ["Dell", "Asus", "Acer", "HP", "Mac book", "DCL"];
-export default async function page() {
+export default async function page(request) {
   return (
     <div className=" min-h-screen h-full rounded flex items-center flex-col">
       <div className="flex gap-3 h-9 ps-12 bg-gray-800 w-full items-center  self-start overflow-x-hidden">
@@ -16,7 +16,7 @@ export default async function page() {
           </Link>
         ))}
       </div>
-      <Home></Home>
+      <Home request={request}></Home>
     </div>
   );
 }

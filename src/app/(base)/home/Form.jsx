@@ -62,8 +62,8 @@ const Form = ({ sm = 1 }) => {
             <fieldset className='flex flex-col justify-between items-start'>
                 <label htmlFor={'priceRange'} className='font-semibold  pb-2'>Price Range</label>
                 <div className=' gap-2 w-full  flex '>
-                    <input type='number' id='minPrice' placeholder='min' min={0} className='border-2 border-gray-300 rounded p-1  w-24'></input>
-                    <input type='number' id='maxPrice' placeholder='max' className='border-2 border-gray-300 rounded p-1  w-24 ms-2'></input>
+                    <input type='number' id='minPrice' placeholder='min' min={0} className='border-2 border-gray-300 rounded p-1  w-20'></input>
+                    <input type='number' id='maxPrice' placeholder='max' className='border-2 border-gray-300 rounded p-1  w-20 ms-2'></input>
                 </div>
             </fieldset>
             <fieldset className='flex gap-2 flex-col '>
