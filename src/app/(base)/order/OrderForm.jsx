@@ -6,6 +6,7 @@ const OrderForm = ({ data }) => {
     const counterRef = useRef(null)
     useEffect(() => {
         SetOrder(data._id);
+        if (counterRef.current) counterRef.current.innerText = GetOrderId(data._id);
     }, [data._id])
     const increment = () => {
         IncrementOrder(data._id)

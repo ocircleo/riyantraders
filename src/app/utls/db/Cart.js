@@ -8,26 +8,28 @@ const getLocalData = () => {
 const setLocalData = (data) => {
   localStorage.setItem("cart", JSON.stringify(data));
 };
-const AddToCart = (id) => {
-  try {
-    const cart = getLocalData();
-    if (cart[id]) cart[id] = Number(cart[id]) + 1;
-    else cart[id] = 1;
-    setLocalData(cart);
-    return true;
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-};
-const RemoveFormCart = (id) => {
+const ToggleAddCart = (id) => {
   try {
     const cart = getLocalData();
     if (cart[id]) {
       delete cart[id];
       setLocalData(cart);
+      return false;
+    } else {
+      cart[id] = 1;
+      setLocalData(cart);
+      return true;
     }
-    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+const isOnCart = (id) => {
+  try {
+    const cart = getLocalData();
+    if (cart[id]) return true;
+    else return false;
   } catch (error) {
     console.log(error);
     return false;
@@ -35,4 +37,4 @@ const RemoveFormCart = (id) => {
 };
 const GetCart = () => getLocalData();
 
-export { AddToCart, RemoveFormCart, GetCart };
+export { ToggleAddCart, isOnCart, GetCart };

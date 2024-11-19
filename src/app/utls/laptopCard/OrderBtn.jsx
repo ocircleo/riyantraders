@@ -1,12 +1,12 @@
 "use client"
 import React from 'react';
-import { AddToCart } from '../db/Cart';
 import { useRouter } from 'next/navigation';
+import { ToggleAddCart } from '../db/Cart';
 
 const OrderBtn = ({ laptop }) => {
     const router = useRouter();
     const order = () => {
-        AddToCart(laptop._id);
+        ToggleAddCart(laptop._id);
         router.push(`/order?items=${laptop._id}`)
     }
     return (

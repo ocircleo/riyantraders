@@ -18,11 +18,12 @@ const Main = async ({ request }) => {
         length = [...new Array(Math.ceil((data?.result?.length ?? 0) / 12)).keys()];
     } catch (error) {
         console.log(error);
-        return <div className='bg-gray-200 w-full h-[200vh] grid place-content-center'> <p>Failed to load data. <br></br> status: {error.message}</p></div>
+        return <div className='bg-white w-full h-screen grid place-content-center text-center text-2xl font-semibold'>OOps...! <br /> <p>Failed to load data. <br></br> Status: {error.message}</p></div>
     }
     return (
-        <div className='flex flex-col'>
+        <div className='flex flex-col w-full'>
 
+            {dataArray.length == 0 ? <div className='grid place-content-center h-screen bg-gray-100 text-center text-2xl w-full '>No data found</div> : null}
 
             <div className='bg-white w-full h-fit grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-4'>
                 {

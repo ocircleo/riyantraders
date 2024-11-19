@@ -9,6 +9,7 @@ import Search from "../searchbar/Search";
 import cart from "/public/cart.png"
 import logo from "/public/logo.png"
 import getUser, { clearUser } from "../db/UserDB";
+import CartIcon from "./CartIcon";
 
 const Navbar = () => {
   const [navState, setNavState] = useState(false)
@@ -57,11 +58,7 @@ const Navbar = () => {
           <div className=" hidden md:flex items-center gap-2">
             <ActiveNavLink to={"/"}>Home</ActiveNavLink>
             <ActiveNavLink to={"/it"}>It Support</ActiveNavLink>
-            <Link href="/cart" className="h-8 w-8 relative rounded p-2">
-              <Image alt="cart" src={cart}  ></Image>
-              <p className="absolute -top-2 text-sm font-semibold -right-2 bg-red-500 rounded-full min-w-5 text-center px-1 text-white">0</p>
-            </Link>
-
+            <CartIcon></CartIcon>
             <div className="hidden md:flex gap-2 ms-4 p-2 border border-red-100  rounded">
               {
                 user ? <div className="flex items-center gap-2">
