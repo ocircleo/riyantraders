@@ -9,89 +9,59 @@ import { useRouter } from 'next/navigation'
 
 const Form = ({ data }) => {
     const [popup, closePopup, showPopup, showPopupError, askPopup] = UsePopup(); const router = useRouter()
+    const lowerCase = (text) => text.toLowerCase();
     const editItem = async (e) => {
         e.preventDefault();
         // newModel is an exact replica of laptop model in db
         let newModel = {
-            _id: data._id,
-            dataUrl: data.dataUrl || GenerateDataUrl(textWash(e.target.Brand.value), textWash(e.target.laptopModel.value)),
+            ...data,
             laptop: {
-                brand: textWash(e.target.Brand.value),
-                model: textWash(e.target.laptopModel.value),
-                price: textWash(e.target.price.value),
-                stock: textWash(e.target.stock.value),
+                brand: lowerCase(textWash(e.target.Brand.value)),
+                model: lowerCase(textWash(e.target.laptopModel.value)),
+                price: Number(textWash(e.target.price.value)),
+                stock: Number(textWash(e.target.stock.value)),
             },
             processor: {
-                brand: textWash(e.target.processorBrand.value),
-                model: textWash(e.target.processorModel.value),
+                brand: lowerCase(textWash(e.target.processorBrand.value)),
+                model: lowerCase(textWash(e.target.processorModel.value)),
                 core: textWash(e.target.processorCore.value),
             },
             display: {
-                size: textWash(e.target.displaySize.value),
+                size: Number(textWash(e.target.displaySize.value)),
                 type: textWash(e.target.displayType.value),
                 resolution: textWash(e.target.displayResolution.value),
                 touchScreen: textWash(e.target.touchScreen.value),
-                features: textWash(e.target.displayFeatures.value),
             },
             memory: {
                 ram: textWash(e.target.ram.value),
                 ramType: textWash(e.target.ramType.value),
-                removable: textWash(e.target.removable.value),
+                description: textWash(e.target.ramDescription.value),
             },
             storage: {
                 type: textWash(e.target.storageType.value),
                 capacity: textWash(e.target.storageCapacity.value),
-                upgradeOptions: textWash(e.target.storageUpgrade.value),
+                description: textWash(e.target.storageDescription.value),
             },
             graphics: {
-                model: textWash(e.target.graphicsModel.value),
-                memory: textWash(e.target.graphicsMemory.value),
+                size: Number(textWash(e.target.graphicSize.value)),
+                ramType: lowerCase(textWash(e.target.graphicsType.value)),
+                description: lowerCase(textWash(e.target.graphicsDescription.value)),
             },
-            keyboardAndTouchpad: {
-                keyboard: {
-                    type: textWash(e.target.keyboardType.value),
-                    features: textWash(e.target.keyboardFeatures.value),
-                },
-                touchpad: textWash(e.target.touchPad.value),
-            },
-            cameraAndAudio: {
-                webcam: textWash(e.target.webcam.value),
-                speaker: textWash(e.target.speaker.value),
-                microphone: textWash(e.target.microphone.value),
-                audioFeatures: textWash(e.target.audioFeatures.value),
-            },
-            portsAndSlots: {
-                cardReader: textWash(e.target.cardReader.value),
-                hdmiPort: textWash(e.target.hdmiPort.value),
-                usbTypeC: textWash(e.target.usbTypeC.value),
-                headphoneJack: textWash(e.target.headphoneJack.value),
-            },
-            networkAndConnectivity: {
-                wifi: textWash(e.target.wifi.value),
-                bluetooth: textWash(e.target.bluetooth.value),
-            },
-            security: {
-                fingerprintSensor: textWash(e.target.fingerprintSensor.value),
-            },
+
+            keyboard: textWash(e.target.keyboard.value),
+            fingerprintSensor: textWash(e.target.fingerprint.value),
+            portsAndSlots: textWash(e.target.ports.value),
+            networkAndConnectivity: textWash(e.target.network.value),
             operatingSystem: textWash(e.target.operatingSystem.value),
-            power: {
-                batteryType: textWash(e.target.batteryType.value),
-                batteryCapacity: textWash(e.target.batteryCapacity.value),
-                adapterType: textWash(e.target.adapterType.value),
-            },
+            battery: textWash(e.target.battery.value),
+
             physicalSpecification: {
                 color: textWash(e.target.color.value),
-                dimensions: {
-                    height: textWash(e.target.height.value),
-                    width: textWash(e.target.width.value),
-                    depth: textWash(e.target.depth.value),
-                },
                 weight: textWash(e.target.weight.value),
             },
             warranty: textWash(e.target.warrantyDetails.value),
-            publishDate: data.publishDate
         };
-        console.log(newModel.physicalSpecification);
+        // console.log(newModel);
         // return;
         newModel = JSON.stringify(newModel);
         try {
@@ -104,7 +74,6 @@ const Form = ({ data }) => {
                 body: newModel,
             });
             const result = await response.json();
-            console.log(result.result.physicalSpecification);
             if (result.error) return showPopupError(result.message)
             showPopup(result.message)
         } catch (error) {
@@ -116,9 +85,7 @@ const Form = ({ data }) => {
     const deleteItem = async () => {
         closePopup();
         for (let item of data.images) {
-            console.log({ item });
             let res = await deleteImage(item)
-            console.log(res);
         }
         try {
             const response = await fetch(API + "admin/delete_product", {
@@ -148,8 +115,8 @@ const Form = ({ data }) => {
                     closePopup={closePopup}
                 ></Popup>
             )}
-            <form className="grid  grid-cols-2 gap-3" onSubmit={editItem}>
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2 ">
+            <form className="grid grid-cols-2 gap-3" onSubmit={editItem}>
+                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="Brand" className="font-bold">
                         Brand <span className="text-red-500">*</span>
                     </label>
@@ -157,12 +124,11 @@ const Form = ({ data }) => {
                         type="text"
                         id="Brand"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Laptop brand | ex: Apple, HP, Asus"
-                        required
+                        placeholder="Laptop brand | ex: Apple, HP, Assus"
                         defaultValue={data.laptop.brand}
+                        required
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="laptopModel" className="font-bold">
                         Laptop Model (important) <span className="text-red-500">*</span>
@@ -171,12 +137,11 @@ const Form = ({ data }) => {
                         type="text"
                         id="laptopModel"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="ex: Apple M1, Asus IP324"
-                        required
+                        placeholder="ex: M1 air, vivo book pro"
                         defaultValue={data.laptop.model}
+                        required
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="price" className="font-bold">
                         Price <span className="text-red-500">*</span>
@@ -186,25 +151,23 @@ const Form = ({ data }) => {
                         id="price"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
                         placeholder="1000..."
-                        required
                         defaultValue={data.laptop.price}
+                        required
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="stock" className="font-bold">
                         In Stock <span className="text-red-500">*</span>
                     </label>
                     <input
-                        type="number"
+                        type="Number"
                         id="stock"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
                         placeholder="Available laptops in stock"
-                        required
                         defaultValue={data.laptop.stock}
+                        required
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="processorBrand" className="font-bold">
                         Processor Brand <span className="text-red-500">*</span>
@@ -213,12 +176,11 @@ const Form = ({ data }) => {
                         type="text"
                         id="processorBrand"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Processor brand | ex: Intel, AMD"
-                        required
+                        placeholder="Processor Brand | ex: Intel, AMD"
                         defaultValue={data.processor.brand}
+                        required
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="processorModel" className="font-bold">
                         Processor Model
@@ -227,11 +189,10 @@ const Form = ({ data }) => {
                         type="text"
                         id="processorModel"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Processor model | ex: M3 Pro chip"
+                        placeholder="Processor model | ex: i5-4440@3.1Ghz"
                         defaultValue={data.processor.model}
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="processorCore" className="font-bold">
                         Processor Core Details
@@ -240,25 +201,23 @@ const Form = ({ data }) => {
                         type="text"
                         id="processorCore"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Processor core details | ex: 12-core CPU, 18-core GPU"
+                        placeholder="Processor core details | ex: 12-core CPU, 2 x performance 2 x base"
                         defaultValue={data.processor.core}
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="displaySize" className="font-bold">
-                        Display Size <span className="text-red-500">*</span>
+                        Display Size (In Inch) <span className="text-red-500">*</span>
                     </label>
                     <input
                         type="text"
                         id="displaySize"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Display size | ex: 16.2-inch"
-                        required
+                        placeholder="Display size | ex: 16.2"
                         defaultValue={data.display.size}
+                        required
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="displayType" className="font-bold">
                         Display Type
@@ -267,11 +226,10 @@ const Form = ({ data }) => {
                         type="text"
                         id="displayType"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Display type | ex: Liquid Retina display"
+                        placeholder="Display type | ex: Oled Display, Liquid Retina display"
                         defaultValue={data.display.type}
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="displayResolution" className="font-bold">
                         Display Resolution
@@ -284,7 +242,6 @@ const Form = ({ data }) => {
                         defaultValue={data.display.resolution}
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="touchScreen" className="font-bold">
                         Touch Screen
@@ -292,40 +249,33 @@ const Form = ({ data }) => {
                     <select
                         id="touchScreen"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        defaultValue={data.display.touchScreen ? "true" : "false"}
                     >
-                        <option value="false">No</option>
-                        <option value="true">Yes</option>
+                        {
+                            data.display.touchScreen == true ?
+                                <>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </> : <>
+                                    <option value="false">No</option>
+                                    <option value="true">Yes</option>
+                                </>
+                        }
+
                     </select>
                 </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="displayFeatures" className="font-bold">
-                        Display Features
-                    </label>
-                    <textarea
-                        id="displayFeatures"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Display features | ex: XDR brightness, contrast ratio, etc."
-                        defaultValue={data.display.features}
-                    ></textarea>
-                </fieldset>
-
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="ram" className="font-bold">
-                        RAM <span className="text-red-500">*</span>
+                        RAM Size (In GB)<span className="text-red-500">*</span>
                     </label>
                     <input
-                        type="text"
+                        type="number"
                         id="ram"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="RAM size | ex: 18GB"
-                        required
+                        placeholder="RAM size | ex: 18"
                         defaultValue={data.memory.ram}
+                        required
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="ramType" className="font-bold">
                         RAM Type
@@ -334,25 +284,22 @@ const Form = ({ data }) => {
                         type="text"
                         id="ramType"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="RAM type | ex: Unified memory"
+                        placeholder="RAM type | ex: LPDDR5, Unified memory"
                         defaultValue={data.memory.ramType}
                     ></input>
                 </fieldset>
 
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="removable" className="font-bold">
-                        Removable Memory
+                    <label htmlFor="ramDescription" className="font-bold">
+                        More About Ram
                     </label>
-                    <select
-                        id="removable"
+                    <textarea
+                        id="ramDescription"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        defaultValue={data.memory.removable}
-                    >
-                        <option value="Non-Removable">Non-Removable</option>
-                        <option value="Removable">Removable</option>
-                    </select>
+                        placeholder="Max size, Expandable slot, Special ram features"
+                        defaultValue={data.memory.description}
+                    ></textarea>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="storageType" className="font-bold">
                         Storage Type
@@ -361,243 +308,127 @@ const Form = ({ data }) => {
                         type="text"
                         id="storageType"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Storage type | ex: SSD"
+                        placeholder="Storage type | ex: nvme SSD, sata SSD, HDD"
                         defaultValue={data.storage.type}
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="storageCapacity" className="font-bold">
-                        Storage Capacity <span className="text-red-500">*</span>
+                        Storage Capacity (In GB) <span className="text-red-500">*</span>
                     </label>
                     <input
-                        type="text"
+                        type="number"
                         id="storageCapacity"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Storage capacity | ex: 512GB"
-                        required
+                        placeholder="Storage capacity | ex: 256, 512"
                         defaultValue={data.storage.capacity}
+                        required
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="storageUpgrade" className="font-bold">
-                        Storage Upgrade Options
+                    <label htmlFor="storageDescription" className="font-bold">
+                        Storage features
                     </label>
                     <textarea
-                        id="storageUpgrade"
+                        id="storageDescription"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Storage upgrade options | ex: 1TB, 2TB"
-                        defaultValue={data.storage.upgradeOptions}
+                        placeholder="Read Write Speed, Dust proof etc. ex: r/w 200/320"
+                        defaultValue={data.storage.description}
                     ></textarea>
                 </fieldset>
 
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="graphicsModel" className="font-bold">
-                        Graphics Model
+                    <label htmlFor="graphicSize" className="font-bold">
+                        Graphics Size (In GB)
                     </label>
                     <input
-                        type="text"
-                        id="graphicsModel"
+                        type="number"
+                        id="graphicSize"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Graphics model | ex: Apple 10-core GPU"
-                        defaultValue={data.graphics.model}
+                        placeholder="Graphics Size | .5, 2, 4"
+                        defaultValue={data.graphics.size}
                     ></input>
                 </fieldset>
 
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="graphicsMemory" className="font-bold">
-                        Graphics Memory
+                    <label htmlFor="graphicsType" className="font-bold">
+                        Graphics Type
                     </label>
                     <input
                         type="text"
-                        id="graphicsMemory"
+                        id="graphicsType"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Graphics memory | ex: Shared"
-                        defaultValue={data.graphics.memory}
+                        placeholder="Integrated, Custom | ex: G-force GTX-4500"
+                        defaultValue={data.graphics.ramType}
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="keyboardType" className="font-bold">
-                        Keyboard Type
+                    <label htmlFor="graphicsDescription" className="font-bold">
+                        More about GPU
                     </label>
-                    <input
-                        type="text"
-                        id="keyboardType"
+                    <textarea
+                        id="graphicsDescription"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Keyboard type | ex: Backlit Magic Keyboard"
-                        defaultValue={data.keyboardAndTouchpad.keyboard.type}
-                    ></input>
+                        placeholder="Clock speed, Special features etc."
+                        defaultValue={data.graphics.description}
+                    ></textarea>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="keyboardFeatures" className="font-bold">
+                    <label htmlFor="keyboard" className="font-bold">
                         Keyboard Features
                     </label>
                     <textarea
-                        id="keyboardFeatures"
+                        id="keyboard"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Keyboard features | ex: 78 keys, ambient light sensor"
-                        defaultValue={data.keyboardAndTouchpad.keyboard.features}
+                        placeholder="Backlit keyboard, full size etc"
+                        defaultValue={data.keyboard}
                     ></textarea>
                 </fieldset>
-
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="touchPad" className="font-bold">
-                        TouchPad Features
-                    </label>
-                    <textarea
-                        id="touchPad"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Touchpad features | ex: Force Touch trackpad"
-                        defaultValue={data.keyboardAndTouchpad.touchpad}
-                    ></textarea>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="webcam" className="font-bold">
-                        Webcam
-                    </label>
-                    <input
-                        type="text"
-                        id="webcam"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Webcam | ex: 1080p FaceTime HD"
-                        defaultValue={data.cameraAndAudio.webcam}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="speaker" className="font-bold">
-                        Speaker System
-                    </label>
-                    <input
-                        type="text"
-                        id="speaker"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Speaker system | ex: six-speaker sound system"
-                        defaultValue={data.cameraAndAudio.speaker}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="microphone" className="font-bold">
-                        Microphone
-                    </label>
-                    <input
-                        type="text"
-                        id="microphone"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Microphone | ex: Three-mic array"
-                        defaultValue={data.cameraAndAudio.microphone}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="audioFeatures" className="font-bold">
-                        Audio Features
-                    </label>
-                    <textarea
-                        id="audioFeatures"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Audio features | ex: Wide stereo sound, Dolby Atmos"
-                        defaultValue={data.cameraAndAudio.audioFeatures}
-                    ></textarea>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="cardReader" className="font-bold">
-                        Card Reader
-                    </label>
-                    <input
-                        type="text"
-                        id="cardReader"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Card Reader type | ex: SD/SDHC/SDXC"
-                        defaultValue={data.portsAndSlots.cardReader}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="hdmiPort" className="font-bold">
-                        HDMI Port
-                    </label>
-                    <input
-                        type="text"
-                        id="hdmiPort"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="HDMI port | ex: 1x HDMI"
-                        defaultValue={data.portsAndSlots.hdmiPort}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="usbTypeC" className="font-bold">
-                        USB Type-C / Thunderbolt
-                    </label>
-                    <input
-                        type="text"
-                        id="usbTypeC"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="USB Type-C | ex: 2x Thunderbolt / USB 4 ports"
-                        defaultValue={data.portsAndSlots.usbTypeC}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="headphoneJack" className="font-bold">
-                        Headphone Jack
-                    </label>
-                    <input
-                        type="text"
-                        id="headphoneJack"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Headphone jack | ex: 3.5 mm headphone jack"
-                        defaultValue={data.portsAndSlots.headphoneJack}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="wifi" className="font-bold">
-                        Wi-Fi
-                    </label>
-                    <input
-                        type="text"
-                        id="wifi"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Wi-Fi version | ex: Wi-Fi 6E (802.11ax)"
-                        defaultValue={data.networkAndConnectivity.wifi}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="bluetooth" className="font-bold">
-                        Bluetooth
-                    </label>
-                    <input
-                        type="text"
-                        id="bluetooth"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Bluetooth version | ex: Bluetooth 5.3"
-                        defaultValue={data.networkAndConnectivity.bluetooth}
-                    ></input>
-                </fieldset>
-
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="fingerprintSensor" className="font-bold">
+                    <label htmlFor="fingerprint" className="font-bold">
                         Fingerprint Sensor
                     </label>
+                    <select
+                        id="fingerprint"
+                        className="py-3 px-2 bg-white rounded outline-indigo-500"
+                    >
+                        {
+                            data.fingerPrint == true ?
+                                <>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </> : <>
+                                    <option value="false">No</option>
+                                    <option value="true">Yes</option>
+                                </>
+                        }
+                    </select>
+                </fieldset>
+                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
+                    <label htmlFor="ports" className="font-bold">
+                        Ports and Slots
+                    </label>
                     <input
                         type="text"
-                        id="fingerprintSensor"
+                        id="ports"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Fingerprint sensor | ex: Touch ID"
-                        defaultValue={data.security.fingerprintSensor}
+                        placeholder="1 x HDMI, 2 x USB 3.00, SD Card Slot"
+                        defaultValue={data.portsAndSlots}
                     ></input>
                 </fieldset>
+                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
+                    <label htmlFor="network" className="font-bold">
+                        Network Connectivity
+                    </label>
+                    <input
+                        type="text"
+                        id="network"
+                        className="py-3 px-2 bg-white rounded outline-indigo-500"
+                        placeholder="Wi-Fi 6E (802.11ax), Bluetooth 4.1"
+                        defaultValue={data.networkAndConnectivity}
+                    ></input>
+                </fieldset>
+
 
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="operatingSystem" className="font-bold">
@@ -607,100 +438,34 @@ const Form = ({ data }) => {
                         type="text"
                         id="operatingSystem"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Operating system | ex: macOS"
-                        defaultValue={data.operatingSystem}
+                        placeholder="Windows 10 pro, Mac os, Kali linux"
+                        defaultValue={data.os}
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="batteryType" className="font-bold">
-                        Battery Type
+                    <label htmlFor="battery" className="font-bold">
+                        Battery
                     </label>
                     <input
                         type="text"
-                        id="batteryType"
+                        id="battery"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Battery type | ex: Lithium‑polymer"
-                        defaultValue={data.power.batteryType}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="batteryCapacity" className="font-bold">
-                        Battery Capacity
-                    </label>
-                    <input
-                        type="text"
-                        id="batteryCapacity"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Battery capacity | ex: 100-watt-hour"
-                        defaultValue={data.power.batteryCapacity}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="adapterType" className="font-bold">
-                        Adapter Type
-                    </label>
-                    <input
-                        type="text"
-                        id="adapterType"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Adapter type | ex: 140W USB-C Power Adapter"
-                        defaultValue={data.power.adapterType}
+                        placeholder="Battery capacity, Watt, Cells etc"
+                        defaultValue={data.battery}
                     ></input>
                 </fieldset>
 
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="color" className="font-bold">
-                        Color <span className="text-red-500">*</span>
+                        Available Color <span className="text-red-500">*</span>
                     </label>
                     <input
                         type="text"
                         id="color"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Color | ex: Space Black"
-                        required
+                        placeholder="Space Black, Sliver, Tint"
                         defaultValue={data.physicalSpecification.color}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="height" className="font-bold">
-                        Height
-                    </label>
-                    <input
-                        type="text"
-                        id="height"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Height | ex: 0.66 inch (1.68 cm)"
-                        defaultValue={data.physicalSpecification.dimensions.height}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="width" className="font-bold">
-                        Width
-                    </label>
-                    <input
-                        type="text"
-                        id="width"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Width | ex: 14.01 inches (35.57 cm)"
-                        defaultValue={data.physicalSpecification.dimensions.width}
-                    ></input>
-                </fieldset>
-
-                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
-                    <label htmlFor="depth" className="font-bold">
-                        Depth
-                    </label>
-                    <input
-                        type="text"
-                        id="depth"
-                        className="py-3 px-2 bg-white rounded outline-indigo-500"
-                        placeholder="Depth | ex: 9.77 inches (24.81 cm)"
-                        defaultValue={data.physicalSpecification.dimensions.depth}
+                        required
                     ></input>
                 </fieldset>
 
@@ -716,7 +481,6 @@ const Form = ({ data }) => {
                         defaultValue={data.physicalSpecification.weight}
                     ></input>
                 </fieldset>
-
                 <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
                     <label htmlFor="warrantyDetails" className="font-bold">
                         Warranty Details <span className="text-red-500">*</span>
@@ -726,12 +490,20 @@ const Form = ({ data }) => {
                         id="warrantyDetails"
                         className="py-3 px-2 bg-white rounded outline-indigo-500"
                         placeholder="Warranty details | ex: 1 Year international warranty"
-                        required
                         defaultValue={data.warranty}
+                        required
                     ></input>
                 </fieldset>
-
-
+                <fieldset className="flex flex-col gap-2 p-2 pb-5 rounded  lg:col-span-1 col-span-2">
+                    <label htmlFor="description" className="font-bold">
+                        Additional description
+                    </label>
+                    <textarea
+                        id="description"
+                        className="py-3 px-2 bg-white rounded outline-indigo-500"
+                        placeholder="If you want to add more information do it hare"
+                    ></textarea>
+                </fieldset>
                 <div className="mt-6 col-span-2 flex items-center justify-center gap-8">
                     <button
                         className={`bg-green-500 w-full lg:w-1/2 text-white font-semibold py-3 rounded  hover:bg-indigo-400 active:scale-95 duration-100`}

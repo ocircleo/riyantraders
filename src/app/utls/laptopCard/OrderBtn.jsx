@@ -11,7 +11,7 @@ const OrderBtn = ({ laptop }) => {
     }
     return (
         <div className='w-full px-2'>
-            <button onClick={order} className='bg-white border-2 border-gray-800  w-full font-semibold text-black py-1 rounded mt-6 hover:bg-black hover:text-blue-600'>Order Now</button>
+            <button onClick={order} className='bg-white border-2 border-gray-800  w-full font-semibold text-black py-1 rounded mt-6 hover:bg-blue-400 hover:text-white '>Order Now</button>
 
         </div>
     );

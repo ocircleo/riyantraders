@@ -35,7 +35,7 @@ const Page = () => {
       if (result.error) return showPopupError(result.message);
       else showPopup(result.message);
       setCookie("accessToken", result?.token, 3);
-      console.log(result);
+
     } catch (error) {
       console.log(error);
       showPopupError(error.message);

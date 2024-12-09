@@ -5,7 +5,6 @@ import Parser from "../utls/textparser/Parser";
 const page = () => {
   const changedText = (e) => {
     let text = e.target.value;
-    console.log(text.split("\n"));
   };
   return (
     <div>

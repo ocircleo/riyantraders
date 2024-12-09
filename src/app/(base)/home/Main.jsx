@@ -5,7 +5,6 @@ import Paginate from './Paginate';
 import PaginateItem from './Paginate';
 
 const Main = async ({ request }) => {
-    console.log(request);
     let searchParams = request?.searchParams
     let page = searchParams.page || 0;
     let response, data, dataArray;

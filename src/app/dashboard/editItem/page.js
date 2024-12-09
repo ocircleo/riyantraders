@@ -18,7 +18,7 @@ const Page = () => {
     setItems({ loading: true, data: [] });
     try {
       const response = await fetch(
-        `${API}user/search_items_admin?text=${text}&stock=${stock}&sort=${price}&page=${page}`
+        `${API}user/search_items_admin?text=${text}&stock=${stock}&sort=${price}&page=${page}`,{cache:"no-cache"}
       );
       const data = await response.json();
       setPages({ current: page, length: data.result.length });

@@ -30,7 +30,7 @@ const Sidebar = () => {
                 </div>
             </div>
             {/* small screen sidebar */}
-            <div className={`bg-white shadow border p-3 w-full ${open ? " left-0" : "-left-full"} flex flex-col lg:hidden lg:w-0 absolute top-0 h-fit duration-100 `}>
+            <div className={`bg-white shadow border p-3 w-full ${open ? " left-0" : "-left-full"} flex flex-col lg:hidden lg:w-0 absolute top-0 h-fit duration-100` } style={{zIndex:"111"}}>
                 <div className='flex justify-between w-full border-b-2  mb-3 pb-2'>
                     <p className='font-semibold'>Filters</p>
                     <button onClick={() => setOpen(false)}>❌</button>

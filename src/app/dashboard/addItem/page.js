@@ -13,84 +13,57 @@ const Page = () => {
   const router = useRouter();
 
   //function to submit form to add a new laptop to database -- below
+  const lowerCase = (text) => text.toLowerCase();
   const addItem = async (e) => {
     e.preventDefault();
     // newModel is an exact replica of laptop model in db
     let newModel = {
       laptop: {
-        brand: textWash(e.target.Brand.value),
-        model: textWash(e.target.laptopModel.value),
-        price: textWash(e.target.price.value),
-        stock: textWash(e.target.stock.value),
+        brand: lowerCase(textWash(e.target.Brand.value)),
+        model: lowerCase(textWash(e.target.laptopModel.value)),
+        price: Number(textWash(e.target.price.value)),
+        stock: Number(textWash(e.target.stock.value)),
       },
       processor: {
-        brand: textWash(e.target.processorBrand.value),
-        model: textWash(e.target.processorModel.value),
+        brand: lowerCase(textWash(e.target.processorBrand.value)),
+        model: lowerCase(textWash(e.target.processorModel.value)),
         core: textWash(e.target.processorCore.value),
       },
       display: {
-        size: textWash(e.target.displaySize.value),
+        size: Number(textWash(e.target.displaySize.value)),
         type: textWash(e.target.displayType.value),
         resolution: textWash(e.target.displayResolution.value),
         touchScreen: textWash(e.target.touchScreen.value),
-        features: textWash(e.target.displayFeatures.value),
       },
       memory: {
         ram: textWash(e.target.ram.value),
         ramType: textWash(e.target.ramType.value),
-        removable: textWash(e.target.removable.value),
+        description: textWash(e.target.ramDescription.value),
       },
       storage: {
         type: textWash(e.target.storageType.value),
         capacity: textWash(e.target.storageCapacity.value),
-        upgradeOptions: textWash(e.target.storageUpgrade.value),
+        description: textWash(e.target.storageDescription.value),
       },
       graphics: {
-        model: textWash(e.target.graphicsModel.value),
-        memory: textWash(e.target.graphicsMemory.value),
+        size: Number(textWash(e.target.graphicSize.value)),
+        ramType: lowerCase(textWash(e.target.graphicsType.value)),
+        description: lowerCase(textWash(e.target.graphicsDescription.value)),
       },
-      keyboardAndTouchpad: {
-        keyboard: {
-          type: textWash(e.target.keyboardType.value),
-          features: textWash(e.target.keyboardFeatures.value),
-        },
-        touchpad: textWash(e.target.touchPad.value),
-      },
-      cameraAndAudio: {
-        webcam: textWash(e.target.webcam.value),
-        speaker: textWash(e.target.speaker.value),
-        microphone: textWash(e.target.microphone.value),
-        audioFeatures: textWash(e.target.audioFeatures.value),
-      },
-      portsAndSlots: {
-        cardReader: textWash(e.target.cardReader.value),
-        hdmiPort: textWash(e.target.hdmiPort.value),
-        usbTypeC: textWash(e.target.usbTypeC.value),
-        headphoneJack: textWash(e.target.headphoneJack.value),
-      },
-      networkAndConnectivity: {
-        wifi: textWash(e.target.wifi.value),
-        bluetooth: textWash(e.target.bluetooth.value),
-      },
-      security: {
-        fingerprintSensor: textWash(e.target.fingerprintSensor.value),
-      },
+
+      keyboard: textWash(e.target.keyboard.value),
+      fingerprintSensor: textWash(e.target.fingerprint.value),
+      portsAndSlots: textWash(e.target.ports.value),
+      networkAndConnectivity: textWash(e.target.network.value),
       operatingSystem: textWash(e.target.operatingSystem.value),
-      power: {
-        batteryType: textWash(e.target.batteryType.value),
-        batteryCapacity: textWash(e.target.batteryCapacity.value),
-        adapterType: textWash(e.target.adapterType.value),
-      },
+      battery: textWash(e.target.battery.value),
+
       physicalSpecification: {
         color: textWash(e.target.color.value),
-        dimensions: {
-          height: textWash(e.target.height.value),
-          width: textWash(e.target.width.value),
-          depth: textWash(e.target.depth.value),
-        },
         weight: textWash(e.target.weight.value),
       },
       warranty: textWash(e.target.warrantyDetails.value),
+      images: [],
     };
     newModel = JSON.stringify(newModel);
     try {

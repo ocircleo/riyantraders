@@ -1,31 +1,44 @@
 import Sidebar from "./Sidebar";
 import Main from "./Main";
 import TopSection from "./TopSection";
+import { queryOrganizer } from "@/app/utls/searchUrlFilter/searchUrlFilter";
+import { API } from "@/app/utls/api/API";
+import ErrorPage from "@/app/error";
+import Search from "@/app/utls/searchbar/Search";
 
 const page = async (request) => {
   let queryParams = request.searchParams;
-  console.log(queryParams);
-  let newObj = {
-    inStock: queryParams?.inStock || "false",
-    min: queryParams?.min || 0,
-    max: queryParams?.max || Infinity,
-    processor: (queryParams?.processor ?? "").split(","),
-    gen: (queryParams?.gen ?? "").split(","),
-    ram: (queryParams?.ram ?? "").split(","),
-    storage: (queryParams?.storage ?? "").split(","),
-    graphics: (queryParams?.graphics ?? "").split(","),
-    page: Number(queryParams.page) || 0,
-    sort: Number(queryParams.sort) || 1,
-    brand: queryParams.brand || "",
-    text: queryParams.text || "",
-  };
+  let finalQuery = queryOrganizer(queryParams);
+  if (!finalQuery?.page) finalQuery.page = 0;
+  let queryString = API + "user/search?";
+  let start = true;
+  for (let item in finalQuery) {
+    if (start) queryString += `${item}=${finalQuery[item]}`;
+    else queryString += `&${item}=${finalQuery[item]}`;
+    start = false;
+  }
+  let data,
+    paginate = { current: finalQuery.page ?? 0 };
+  try {
+    let result = await fetch(queryString, { cache: "no-cache" });
+    data = await result.json();
+    data = data?.result ?? {};
+    paginate.length = data?.length ?? 0;
+    if (data.error) return <ErrorPage></ErrorPage>;
+  } catch (error) {
+    console.log(queryString);
+    return <ErrorPage></ErrorPage>;
+  }
   return (
     <div className="w-full">
+        <Search invisible="lg"></Search>
       <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-5/6 relative py-4 mx-auto">
-        <Sidebar request={newObj}></Sidebar>
+        <Sidebar data={data} request={finalQuery}></Sidebar>
         <section className="w-full">
           <TopSection></TopSection>
-          <Main request={newObj}></Main>
+          <div>
+            <Main data={data} query={finalQuery} paginate={paginate}></Main>
+          </div>
         </section>
       </div>
     </div>

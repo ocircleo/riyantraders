@@ -36,11 +36,10 @@ const ImageFrom = ({ data, imgUrl, targetIndex }) => {
     type = file.type;
     let extension = file.name.split(".");
     extension = extension[extension.length - 1];
-    console.log(extension);
+
     name = `${Date.now()}x${Math.random()
       .toString(36)
       .slice(2, 11)}.${extension}`;
-    console.log(name);
     const filePath = mainUrlPart ? mainUrlPart : "rt_images/" + name;
     const storageRef = ref(storage, filePath);
     const metadata = { contentType: type };

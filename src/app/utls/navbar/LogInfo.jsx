@@ -19,10 +19,11 @@ const LogInfo = ({ sm = false }) => {
         };
         fetchUser();
     }, []);
+    //for small screen if user is logged in
     if (sm && user) {
         return (
             <>
-                <ActiveLink to="/dashboard">{user.name}</ActiveLink>
+                <ActiveLink to={user.role == "admin" ? "/dashboard" : "/account"}>{user.name}</ActiveLink>
                 <button
                     className="bg-red-500 text-black px-3 py-2 rounded font-semibold shadow-inner"
                     onClick={logOut}
@@ -32,7 +33,7 @@ const LogInfo = ({ sm = false }) => {
             </>
         );
     }
-
+    // if small screen and no user is logged in
     if (sm && !user) {
         return (
             <>
@@ -45,7 +46,7 @@ const LogInfo = ({ sm = false }) => {
     if (user) {
         return (
             <div className="flex items-center gap-2">
-                <ActiveNavLink to="/dashboard">{user.name}</ActiveNavLink>
+                <ActiveNavLink to={user.role == "admin" ? "/dashboard":"/account"}>{user.name}</ActiveNavLink>
                 <span className="text-red-600">|</span>
                 <button
                     className="bg-red-500 text-white px-3 py-1 rounded"

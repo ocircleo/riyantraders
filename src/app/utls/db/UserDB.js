@@ -21,6 +21,8 @@ const fetchUser = async (cookie) => {
     loading = false;
     user_cached = null;
     return user_cached;
+  } finally {
+    console.clear();
   }
 };
 let promise;

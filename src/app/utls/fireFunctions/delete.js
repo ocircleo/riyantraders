@@ -3,9 +3,7 @@ import FireApp from "../FireApp/FireApp";
 
 let storage = getStorage(FireApp);
 const deleteImage = async (imgUrl) => {
-  console.log("imgUrl: ", imgUrl);
   if (!imgUrl) {
-    console.log("No imgUrl");
     return { error: true };
   }
   try {

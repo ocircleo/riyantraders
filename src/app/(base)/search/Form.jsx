@@ -1,7 +1,12 @@
-import { useRouter } from 'next/navigation';
+import emitter from '@/app/utls/mitt/Mit';
+import { queryOrganizer } from '@/app/utls/searchUrlFilter/searchUrlFilter';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 
-const Form = ({ query, sm = 1 }) => {
+
+const Form = ({ setLoading, queryParams, sm }) => {
+    const params = useSearchParams()
+    let query = queryParams;
 
     const formRef = useRef(null)
     const router = useRouter()
@@ -9,69 +14,118 @@ const Form = ({ query, sm = 1 }) => {
         e.preventDefault()
         // console.log(e.target);
     }
-    const change = (e) => {
-        if (!formRef.current) return;
-        const data = {
-            inStock: formRef.current['inStock' + sm].checked,  // boolean
-            priceRange: {
-                min: parseFloat(formRef.current['minPrice'].value) || 0,
-                max: parseFloat(formRef.current['maxPrice'].value) || Infinity,
-            },
-            processorBrand: [],
-            processorGeneration: [],
-            ramSize: [],
-            storage: [],
-            graphicsMemory: [],
-            sort: query?.sort || 1,
+    const stockChange = (e) => {
+        setLoading(true);
+        let target, name, checked;
+        target = e.target;
+        name = target.name;
+        checked = target.checked;
+        if (!checked) delete query[name];
+        else query[name] = checked;
+        if(query?.page) query.page = 0;
+        let queryString = "/search?";
+        let start = true;
+        for (let item in query) {
+            if (start) queryString += `${item}=${query[item]}`;
+            else queryString += `&${item}=${query[item]}`;
+            start = false;
+        }
+        router.push(queryString)
+    }
+    const queryChange = (e) => {
+        setLoading(true)
+        query = {};
+        for (const [key, value] of params.entries()) {
+            query[key] = value;
+        }
+        query = queryOrganizer(query)
+        if(query?.page) query.page = 0;
+        let target, name, checked;
+        target = e.target;
+        name = target.dataset.name;
+        checked = target.checked;
+        let category = target.dataset.category;
 
+        // checked on input
+        if (checked) {
+            //checks if there is an attribute based on the category like ram or cpu 
+            if (query[category] && !query[category].includes(name.toLowerCase())) query[category].push(name.toLowerCase());
+            //sets the attribute of that category as an array on the query object
+            else query[category] = [name.toLowerCase()];
+        }
+        else {
+            if (query[category] && query[category].includes(name.toLowerCase())) query[category].splice(query[category].indexOf(name.toLowerCase()), 1);
+            if (query[category] && query[category].length == 0) delete query[category];
         };
 
-        // Processor brand checkboxes
-        ['intel', 'amd', 'apple'].forEach((brand) => {
-            if (formRef.current[brand + sm].checked) data.processorBrand.push(brand);
-        });
 
-        // Processor generation checkboxes
-        [8, 9, 10, 11, 12, 13, 14].forEach((gen) => {
-            if (formRef.current[`${gen}th${sm}`].checked) data.processorGeneration.push(gen);
-        });
 
-        // RAM size checkboxes
-        [2, 4, 8, 16, 32, 64].forEach((ram) => {
-            if (formRef.current[`${ram}gb${sm}`].checked) data.ramSize.push(ram);
-        });
+        //makes an url and pushes to the url stack
+        let queryString = "/search?";
+        let start = true;
+        for (let item in query) {
+            if (start) queryString += `${item}=${query[item]}`;
+            else queryString += `&${item}=${query[item]}`;
+            start = false;
+        }
+        router.push(queryString)
+    }
+    const queryChangeNumType = (e) => {
+        setLoading(true)
+        query = {};
+        for (const [key, value] of params.entries()) {
+            query[key] = value;
+        }
+        query = queryOrganizer(query)
+        if(query?.page) query.page = 0;
+        let target, name, checked;
+        target = e.target;
+        name = target.dataset.name;
+        checked = target.checked;
+        let category = target.dataset.category;
 
-        // Storage checkboxes
-        [128, 256, 512, 1, 2, 3].forEach((storage) => {
-            if (formRef.current[`s${storage}${sm}`].checked) data.storage.push(storage);
-            // console.log(formRef.current);
-        });
+        // checked on input
+        if (checked) {
 
-        // Graphics memory checkboxes
-        [0, 2, 4, 8, 16].forEach((graphics) => {
-            if (formRef.current[`g${graphics}gb${sm}`].checked) data.graphicsMemory.push(graphics);
-        });
+            //checks if there is an attribute based on the category like ram or cpu 
+            if (query[category] && !query[category].includes(Number(name))) query[category].push(Number(name));
+            //sets the attribute of that category as an array on the query object
+            else query[category] = [Number(name)];
+        }
+        else {
+            if (query[category] && query[category].includes(Number(name))) query[category].splice(query[category].indexOf(Number(name)), 1);
+            if (query[category] && query[category].length == 0) delete query[category];
+        };
 
-        router.push(`/search?inStock=${data.inStock}&min=${data.priceRange.min}&max=${data.priceRange.max}&processor=${data.processorBrand}&gen=${data.processorGeneration}&ram=${data.ramSize}&storage=${data.storage}&graphics=${data.graphicsMemory}&sort=${query.sort}`)
-        // Send 'data' to the backend via API call here
+
+
+        //makes an url and pushes to the url stack
+        let queryString = "/search?";
+        let start = true;
+        for (let item in query) {
+            if (start) queryString += `${item}=${query[item]}`;
+            else queryString += `&${item}=${query[item]}`;
+            start = false;
+        }
+        router.push(queryString)
     }
     useEffect(() => {
         if (formRef.current) {
-            if (query.inStock == 'true') formRef.current['inStock' + sm].checked = true;
-            formRef.current['minPrice'].value = Number(query.min);
-            if (query.max == "Infinity") formRef.current['maxPrice'].value = 1000000;
-            else formRef.current['maxPrice'].value = Number(query.max);
-            query.processor.map(ele => { if (formRef.current[ele + sm]) formRef.current[ele + sm].checked = true })
-            query.gen.map(ele => { if (formRef.current[ele + "th" + sm]) formRef.current[ele + "th" + sm].checked = true })
-            query.ram.map(ele => { if (formRef.current[ele + "gb" + sm]) formRef.current[ele + "gb" + sm].checked = true })
-            query.storage.map(ele => { if (formRef.current["s" + ele + sm]) formRef.current["s" + ele + sm].checked = true })
-            query.graphics.map(ele => { if (formRef.current["g" + ele + "gb" + sm]) formRef.current["g" + ele + "gb" + sm].checked = true })
+            if (query.inStock) formRef.current['inStock' + sm].checked = true;
+            if (query.min) formRef.current['minPrice'].value = query.min;
+            else formRef.current['minPrice'].value = 0;
+            if (query.max) formRef.current['maxPrice'].value = query.max;
+            else formRef.current['maxPrice'].value = 1000000;
+            if (query.processor) query.processor.map(ele => { if (formRef.current[ele + sm]) formRef.current[ele + sm].checked = true })
+            if (query.ram) query.ram.map(ele => { if (formRef.current[ele + "GB" + sm]) formRef.current[ele + "GB" + sm].checked = true })
+            if (query.storage) query.storage.map(ele => { if (formRef.current["s" + ele + sm]) formRef.current["s" + ele + sm].checked = true })
+            if (query.graphics) query.graphics.map(ele => { if (formRef.current["g" + ele + "gb" + sm]) formRef.current["g" + ele + "gb" + sm].checked = true })
         }
-    }, [query, sm])
+    }, [sm])
     return (
-        <form ref={formRef} className='flex flex-col gap-4 px-4 pb-8' action='/search' onChange={change}>
+        <form ref={formRef} className='flex flex-col gap-4 px-4 pb-8' action='/search'>
             <fieldset className='flex gap-2 items-center'>
-                <input type="checkbox" id={'inStock' + sm} className='h-4 w-4' />
+                <input type="checkbox" name='inStock' id={'inStock' + sm} className='h-4 w-4' onChange={stockChange} />
                 <label htmlFor={'inStock' + sm} className='text-sm'>Show only in Stock items</label>
             </fieldset>
             <fieldset className='flex flex-col justify-between items-start'>
@@ -84,93 +138,52 @@ const Form = ({ query, sm = 1 }) => {
             <fieldset className='flex gap-2 flex-col '>
                 <p className='font-semibold'>Processor Brand</p>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'intel' + sm} className='h-4 w-4' />
+                    <input data-name='Intel' data-category="processor" onChange={queryChange} type="checkbox" id={'intel' + sm} className='h-4 w-4' />
                     <label htmlFor={'intel' + sm} >Intel</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'amd' + sm} className='h-4 w-4' />
+                    <input data-name='Amd' data-category="processor" onChange={queryChange} type="checkbox" id={'amd' + sm} className='h-4 w-4' />
                     <label htmlFor={'amd' + sm} >Amd</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'apple' + sm} className='h-4 w-4' />
+                    <input data-name='Apple' data-category="processor" onChange={queryChange} type="checkbox" id={'apple' + sm} className='h-4 w-4' />
                     <label htmlFor={'apple' + sm} >Apple</label>
 
                 </div>
 
             </fieldset>
             <fieldset className='flex gap-2 flex-col ' >
-                <p className='font-semibold'>Processor Generation</p>
-                <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'8th' + sm} value={5} className='h-4 w-4' />
-                    <label htmlFor={'8th' + sm} >8th Gen</label>
-
-                </div>
-                <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'9th' + sm} value={5} className='h-4 w-4' />
-                    <label htmlFor={'9th' + sm} >9th Gen</label>
-
-                </div>
-                <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'10th' + sm} value={10} className='h-4 w-4' />
-                    <label htmlFor={'10th' + sm} >10th Gen</label>
-
-                </div>
-                <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'11th' + sm} value={11} className='h-4 w-4' />
-                    <label htmlFor={'11th' + sm} >11th Gen</label>
-
-                </div>
-                <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'12th' + sm} value={12} className='h-4 w-4' />
-                    <label htmlFor={'12th' + sm} >12th Gen</label>
-
-                </div>
-                <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'13th' + sm} value={13} className='h-4 w-4' />
-                    <label htmlFor={'13th' + sm} >13th Gen</label>
-
-                </div>
-                <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'14th' + sm} value={14} className='h-4 w-4' />
-                    <label htmlFor={'14th' + sm} >14th Gen</label>
-
-                </div>
-
-
-
-            </fieldset>
-            <fieldset className='flex gap-2 flex-col ' >
                 <p className='font-semibold'>Ram Size</p>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'2gb' + sm} value={2} className='h-4 w-4' />
-                    <label htmlFor={'2gb' + sm} >2 GB</label>
+                    <input type="checkbox" data-name='2' data-category="ram" onChange={queryChangeNumType} id={'2GB' + sm} value={2} className='h-4 w-4' />
+                    <label htmlFor={'2GB' + sm} >2 GB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'4gb' + sm} value={4} className='h-4 w-4' />
-                    <label htmlFor={'4gb' + sm} >4 GB</label>
+                    <input type="checkbox" data-name='4' data-category="ram" onChange={queryChangeNumType} id={'4GB' + sm} value={4} className='h-4 w-4' />
+                    <label htmlFor={'4GB' + sm} >4 GB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'8gb' + sm} value={8} className='h-4 w-4' />
-                    <label htmlFor={'8gb' + sm} >8 GB</label>
+                    <input type="checkbox" data-name='8' data-category="ram" onChange={queryChangeNumType} id={'8GB' + sm} value={8} className='h-4 w-4' />
+                    <label htmlFor={'8GB' + sm} >8 GB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'16gb' + sm} value={16} className='h-4 w-4' />
-                    <label htmlFor={'16gb' + sm} >16 GB</label>
+                    <input type="checkbox" data-name='16' data-category="ram" onChange={queryChangeNumType} id={'16GB' + sm} value={16} className='h-4 w-4' />
+                    <label htmlFor={'16GB' + sm} >16 GB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'32gb' + sm} value={32} className='h-4 w-4' />
-                    <label htmlFor={'32gb' + sm} >32 GB</label>
+                    <input type="checkbox" data-name='32' data-category="ram" onChange={queryChangeNumType} id={'32GB' + sm} value={32} className='h-4 w-4' />
+                    <label htmlFor={'32GB' + sm} >32 GB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'64gb' + sm} value={64} className='h-4 w-4' />
-                    <label htmlFor={'64gb' + sm} >64 GB+</label>
+                    <input type="checkbox" data-name='64' data-category="ram" onChange={queryChangeNumType} id={'64GB' + sm} value={64} className='h-4 w-4' />
+                    <label htmlFor={'64GB' + sm} >64 GB+</label>
 
                 </div>
 
@@ -180,32 +193,32 @@ const Form = ({ query, sm = 1 }) => {
             <fieldset className='flex gap-2 flex-col '  >
                 <p className='font-semibold'>Storage</p>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'s128' + sm} value={128} className='h-4 w-4' />
+                    <input type="checkbox" data-name='128' data-category="storage" onChange={queryChange} id={'s128' + sm} value={128} className='h-4 w-4' />
                     <label htmlFor={'s128' + sm} >128 GB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'s256' + sm} value={256} className='h-4 w-4' />
+                    <input type="checkbox" data-name='256' data-category="storage" onChange={queryChange} id={'s256' + sm} value={256} className='h-4 w-4' />
                     <label htmlFor={'s256' + sm} >256 GB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'s512' + sm} value={512} className='h-4 w-4' />
+                    <input type="checkbox" data-name='512' data-category="storage" onChange={queryChange} id={'s512' + sm} value={512} className='h-4 w-4' />
                     <label htmlFor={'s512' + sm} >512 GB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'s1' + sm} value={1} className='h-4 w-4' />
+                    <input type="checkbox" data-name='1' data-category="storage" onChange={queryChange} id={'s1' + sm} value={1} className='h-4 w-4' />
                     <label htmlFor={'s1' + sm} >1 TB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'s2' + sm} value={2} className='h-4 w-4' />
+                    <input type="checkbox" data-name='2' data-category="storage" onChange={queryChange} id={'s2' + sm} value={2} className='h-4 w-4' />
                     <label htmlFor={'s2' + sm} >2 TB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'s3' + sm} value={3} className='h-4 w-4' />
+                    <input type="checkbox" data-name='3' data-category="storage" onChange={queryChange} id={'s3' + sm} value={3} className='h-4 w-4' />
                     <label htmlFor={'s3' + sm} >3 TB+</label>
 
                 </div>
@@ -213,27 +226,27 @@ const Form = ({ query, sm = 1 }) => {
             <fieldset className='flex gap-2 flex-col ' >
                 <p className='font-semibold'>Graphics Memory</p>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'g0gb' + sm} value={0} className='h-4 w-4' />
+                    <input type="checkbox" data-name='0' data-category="graphics" onChange={queryChange} id={'g0gb' + sm} value={0} className='h-4 w-4' />
                     <label htmlFor={'g0gb' + sm} >Shared / Integrated</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'g2gb' + sm} value={2} className='h-4 w-4' />
+                    <input type="checkbox" data-name='2' data-category="graphics" onChange={queryChange} id={'g2gb' + sm} value={2} className='h-4 w-4' />
                     <label htmlFor={'g2gb' + sm} >Dedicated 2 GB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'g4gb' + sm} value={4} className='h-4 w-4' />
+                    <input type="checkbox" data-name='4' data-category="graphics" onChange={queryChange} id={'g4gb' + sm} value={4} className='h-4 w-4' />
                     <label htmlFor={'g4gb' + sm} >Dedicated 4 GB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'g8gb' + sm} value={8} className='h-4 w-4' />
+                    <input type="checkbox" data-name='8' data-category="graphics" onChange={queryChange} id={'g8gb' + sm} value={8} className='h-4 w-4' />
                     <label htmlFor={'g8gb' + sm} >Dedicated 8 GB</label>
 
                 </div>
                 <div className='flex gap-2 items-center'>
-                    <input type="checkbox" id={'g16gb' + sm} value={16} className='h-4 w-4' />
+                    <input type="checkbox" data-name='16' data-category="graphics" onChange={queryChange} id={'g16gb' + sm} value={16} className='h-4 w-4' />
                     <label htmlFor={'g16gb' + sm} >Dedicated 16 GB+</label>
 
                 </div>

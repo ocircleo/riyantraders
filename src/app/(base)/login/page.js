@@ -31,7 +31,6 @@ const Login = () => {
       return;
     }
     button.innerText = "Successful";
-    console.log(data);
     setCookie("accessToken", data?.token, 3);
     setAuthInfo(data);
     router.replace("/dashboard");

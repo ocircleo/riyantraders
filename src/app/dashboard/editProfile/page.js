@@ -37,7 +37,6 @@ const Page = () => {
         body: JSON.stringify(data),
       });
       const result = await res.json();
-      console.log(result);
       if (result.error) showPopupError(result.message);
       else showPopup(result.message);
     } catch (error) {

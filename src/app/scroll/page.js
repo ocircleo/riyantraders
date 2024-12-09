@@ -4,7 +4,6 @@ import React from "react";
 const page = () => {
   const scrolling = (e) => {
     e.preventDefault();
-    console.log(e);
   };
   return (
     <div

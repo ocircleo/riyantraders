@@ -10,7 +10,6 @@ const Page = async (request) => {
   try {
     res = await fetch(API + "user/laptop_id/" + id, { cache: "no-cache" });
     data = await res.json();
-    console.log(data.result);
   } catch (error) {
     console.log(error);
     return <ErrorPage></ErrorPage>;
@@ -27,7 +26,8 @@ const Page = async (request) => {
             href={"/dashboard/upload-image/" + data.result._id}
             className=" font-semibold bg-white px-6 py-3 shadow border-dashed border border-black"
           >
-            Upload or Modify Images for {data.result.laptop.brand} {data.result.laptop.model}
+            Upload or Modify Images for {data.result.laptop.brand}{" "}
+            {data.result.laptop.model}
           </Link>
         </div>
       </div>

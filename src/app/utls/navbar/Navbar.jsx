@@ -7,7 +7,7 @@ import nav from "./nav.module.css";
 import Image from "next/image";
 import Search from "../searchbar/Search";
 import cart from "/public/cart.png"
-import logo from "/public/logo.png"
+import logo from "/public/logo2.png"
 import getUser, { clearUser } from "../db/UserDB";
 import CartIcon from "./CartIcon";
 
@@ -49,11 +49,10 @@ const Navbar = () => {
     <>
       <nav className="h-16 w-full fixed top-0 bg-white/30 backdrop-blur-md  flex justify-between items-center px-4 md:px-6 lg:px-10 gap-2 shadow z-[111]">
         <Link href={"/"} className="relative flex items-center  flex-col">
-          {/* <Image alt="Tooltip logo" src={logo} className="h-8 w-16 bg-white "></Image> */}
-          <span className="text-xl sm:text-2xl lg:text-3xl font-bold "><span className="text-gray-700">Raiyan</span> <span className="text-red-600">Traders</span> </span>
+          <Image alt="Ryan traders logo" src={logo} height={40} width={150} className="scale-50 origin-left lg:scale-75 xl:scale-90 2xl:scale-100 bg-transparent"></Image>
         </Link>
 
-        <Search text={""} invisible={"sm"}></Search>
+        <Search invisible={"sm"}></Search>
         <div className=" gap-3 items-center flex">
           <div className=" hidden md:flex items-center gap-2">
             <ActiveNavLink to={"/"}>Home</ActiveNavLink>
@@ -62,7 +61,7 @@ const Navbar = () => {
             <div className="hidden md:flex gap-2 ms-4 p-2 border border-red-100  rounded">
               {
                 user ? <div className="flex items-center gap-2">
-                  <ActiveNavLink to="/dashboard">{user.name}</ActiveNavLink>
+                  <ActiveNavLink to={user.role == "admin" ? "/dashboard" : "/account"}>{user.name}</ActiveNavLink>
                   <span className="text-red-600">|</span>
                   <button
                     className="bg-red-500 text-white px-3 py-1 rounded"
@@ -78,10 +77,10 @@ const Navbar = () => {
               }
             </div>
           </div>
-          <Link href="/cart" className="h-8 w-8 relative   rounded p-2 md:hidden">
-            <Image alt="cart" src={cart}  ></Image>
-            <p className="absolute -top-2 text-sm font-semibold -right-2 bg-red-500 rounded-full min-w-5 text-center px-1 text-white">0</p>
-          </Link>
+          <div className="flex md:hidden">
+            <CartIcon></CartIcon>
+        
+          </div>
           {/* Navbar toggler for small screen -- below  */}
           <div
             onClick={toggleNav}
@@ -98,9 +97,6 @@ const Navbar = () => {
             ></div>
           </div>
         </div>
-
-
-
       </nav >
       <div className="h-16 w-full bg-white"></div>
       {/* //Small Screen  sidebar -- below */}
@@ -143,7 +139,7 @@ const Navbar = () => {
           >
             {
               user ? <>
-                <Link href="/dashboard">{user.name}</Link>
+                <Link href={user.role == "admin" ? "/dashboard" : "/account"}>{user.name}</Link>
                 <button
                   className="bg-red-500 text-black px-3 py-1 rounded font-semibold shadow-inner"
                   onClick={logOut}
