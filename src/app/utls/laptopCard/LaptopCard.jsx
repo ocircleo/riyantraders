@@ -8,7 +8,7 @@ import compare from "/public/compare.png"
 import CartButton from './CartButton';
 const LaptopCard = ({ laptop }) => {
     let flag;
-    if (Number(laptop?.laptop?.stock) == 0) flag = <div className='absolute top-0 rounded-tl-sm rounded-br-md left-0 bg-red-500 text-white px-2 text-xs font-semibold'>Out of Stock</div>
+    if (Number(laptop?.laptop?.stock) <= 0) flag = <div className='absolute top-0 rounded-tl-sm rounded-br-md left-0 bg-red-500 text-white px-2 text-xs font-semibold'>Out of Stock</div>
     else if (Number(laptop?.laptop?.stock) < 10) flag = <div className='absolute top-0 rounded-tl-sm rounded-br-md left-0 bg-orange-500 text-white px-2 text-xs font-semibold'>Low Stock</div>
 
     return (

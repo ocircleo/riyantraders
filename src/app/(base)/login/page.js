@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { setAuthInfo } from "../../utls/auth/AuthInfo";
 import { setCookie } from "../../utls/cookie/Cookie";
 import { API } from "@/app/utls/api/API";
+import emitter from "@/app/utls/mitt/Mit";
 const Login = () => {
   const [show, setShow] = useState(false);
   const router = useRouter();
@@ -32,8 +33,8 @@ const Login = () => {
     }
     button.innerText = "Successful";
     setCookie("accessToken", data?.token, 3);
-    setAuthInfo(data);
-    router.replace("/dashboard");
+    emitter.emit("logged");
+    router.back();
   };
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-white px-2">

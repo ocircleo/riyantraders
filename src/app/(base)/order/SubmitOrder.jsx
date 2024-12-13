@@ -6,11 +6,11 @@ import emitter from '@/app/utls/mitt/Mit';
 
 const SubmitOrder = () => {
     const [total, setTotal] = useState({ total: 0, price: 0 })
-    const submit = (e) => {
-        e.preventDefault();
-        let data = GetOrder()
-        console.log(data);
-    }
+    // const submit = (e) => {
+    //     e.preventDefault();
+    //     let data = GetOrder()
+    //     console.log(data);
+    // }
     const orderUpdated = () => {
 
         let data = GetOrder()
@@ -30,23 +30,19 @@ const SubmitOrder = () => {
         return () => emitter.off("orderUpdated")
     }, [])
     return (
-        <div className='w-full flex flex-col p-6  h-full gap-1'>
-            <p className='font-semibold'>Total Items Selected: {total.total}</p>
-            <p className='font-semibold'>Price: {total.price} Taka</p>
-            <form>
+        <div className='w-full flex flex-col-reverse lg:flex-row justify-between p-6  h-full gap-1'>
+            <div className='my-4'>
+                <p className='font-semibold pb-2'>Payment Method</p>
+                <input type='radio' name='paymentMethod' value={"cod"} id='cod' />
+                <label htmlFor="cod" className='ms-2 '>Cash on Delivery  </label><br />
+                <input type='radio' name='paymentMethod' className='pointer-events-none' value={"coo"} id='coo' defaultChecked />
+                <label htmlFor="coo" className='ms-2 pointer-events-none'>Online Payment <span className='text-xs font-semibold'>(Unavailable)</span></label><br />
+            </div>
+            <div>
+                <p className=''>Total Items: {total.total}</p>
+                <p className=''>Price:<span className='font-semibold'> {total.price} Taka</span> </p>
 
-                <div className='my-4 font-semibold'>
-                    <input type='radio' name='paymentMethod' value={"cod"} id='cod' />
-                    <label htmlFor="cod">Cash on Delivery</label><br />
-                    <input type='radio' name='paymentMethod' value={"coo"} id='coo' defaultChecked />
-                    <label htmlFor="coo">Online Payment</label><br />
-
-                </div>
-                <button onClick={submit} className='bg-green-500 px-12 py-1 font-semibold w-fit '>
-                    Confirm Order
-                </button>
-            </form>
-
+            </div>
         </div>
     );
 }

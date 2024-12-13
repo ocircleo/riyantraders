@@ -10,6 +10,7 @@ import cart from "/public/cart.png"
 import logo from "/public/logo2.png"
 import getUser, { clearUser } from "../db/UserDB";
 import CartIcon from "./CartIcon";
+import emitter from "../mitt/Mit";
 
 const Navbar = () => {
   const [navState, setNavState] = useState(false)
@@ -21,10 +22,15 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    (async function () {
+    async function log() {
       let temUser = await getUser();
       if (temUser) setUser(temUser);
-    })();
+    };
+    log();
+    const logHandler = () => log();
+    emitter.on("logged", logHandler)
+    return () => emitter.off("logged")
+
   }, []);
   const navLinks = [
     {
@@ -79,7 +85,7 @@ const Navbar = () => {
           </div>
           <div className="flex md:hidden">
             <CartIcon></CartIcon>
-        
+
           </div>
           {/* Navbar toggler for small screen -- below  */}
           <div

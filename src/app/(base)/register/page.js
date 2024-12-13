@@ -5,6 +5,7 @@ import { setCookie } from "../../utls/cookie/Cookie";
 import { setAuthInfo } from "../../utls/auth/AuthInfo";
 import { useRouter } from "next/navigation";
 import { API } from "@/app/utls/api/API";
+import emitter from "@/app/utls/mitt/Mit";
 
 const Register = () => {
   const [show, setShow] = useState(false);
@@ -35,7 +36,8 @@ const Register = () => {
       return;
     }
     setCookie("accessToken", data?.token, 3);
-    router.replace("/dashboard");
+    emitter.emit("logged");
+    router.back();
   };
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-white px-2">

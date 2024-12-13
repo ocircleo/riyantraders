@@ -29,7 +29,7 @@ const Page = () => {
   }, []);
   return (
     <div className="w-5/6 mx-auto mb-12">
-      <h1 className="text-3xl font-bold text-center underline underline-offset-4 my-6">
+      <h1 className="text-2xl font-bold  mt-4">
         Cart Items{" "}
       </h1>
       <button
