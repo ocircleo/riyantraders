@@ -170,7 +170,7 @@ const Page = () => {
           <div className="col-span-2">Name</div>
           <div className="col-span-3">Phone</div>
           <div className="col-span-4">Email</div>
-          <div className="col-span-2">City</div>
+          <div className="col-span-2">Edit</div>
         </div>
         {users.loading ? (
           <p className="text-center py-12 text-lg font-semibold">Loading ...</p>
@@ -196,10 +196,10 @@ const Page = () => {
       <Pagination current={pages.current} paginate={paginate}></Pagination>
       <NextPrev
         info={NextPrevFunc(
-          "/dashboard/addItem",
-          "Add Item",
-          "/dashboard/statistics",
-          "Statistics"
+          "/dashboard/editItem",
+          "Edit Item",
+          "/dashboard/messages",
+          "Messages"
         )}
       ></NextPrev>
     </div>

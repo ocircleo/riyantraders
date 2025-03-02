@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React from "react";
-
+import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 const NextPrev = ({ info }) => {
   let { prevUrl, prevText } = info.prev;
   let { nextUrl, nextText } = info.next;
@@ -16,18 +17,18 @@ const NextPrev = ({ info }) => {
           <p className="text-sm">Previous</p>
           <Link
             href={prevUrl}
-            className="bg-transparent underline underline-offset-4  font-semibold py-3 rounded text-center hover:text-indigo-500"
+            className="bg-transparent underline underline-offset-4  font-semibold py-3 rounded text-center hover:text-indigo-500 flex items-center gap-2"
           >
-            ⬅️ {prevText}
+            <FaArrowLeft /> {prevText}
           </Link>
         </div>
         <div className="">
           <p className="text-sm">Next</p>
           <Link
             href={nextUrl}
-            className="bg-transparent underline underline-offset-4  font-semibold py-3 rounded text-center hover:text-indigo-500"
+            className="bg-transparent underline underline-offset-4  font-semibold py-3 rounded text-center hover:text-indigo-500 flex items-center gap-2"
           >
-            {nextText} ➡️
+            {nextText} <FaArrowRight />
           </Link>
         </div>
       </div>

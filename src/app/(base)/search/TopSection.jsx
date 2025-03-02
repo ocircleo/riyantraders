@@ -38,14 +38,6 @@ const TopSection = () => {
             <button >Sort Items</button>
             <div className='flex gap-3'>
 
-                {/* <div className='flex gap-2'>
-                    <p>Brand</p>
-                    <select className='border-2 bg-blue-400 rounded text-white text-sm font-semibold px-2 cursor-pointer'>
-                        <option>All</option>
-                        <option>low to high</option>
-                        <option>High to low</option>
-                    </select>
-                </div> */}
                 <div className='flex gap-2 items-center'>
                     <p>Price</p>
                     <select onChange={filterPrice} className='border-2  rounded  text-sm font-semibold px-2 py-1 cursor-pointer'>

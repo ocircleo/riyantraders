@@ -14,7 +14,6 @@ import { FaHome } from "react-icons/fa";
 const Layout = ({ children }) => {
   const pathName = usePathname();
   const router = useRouter();
-  console.log(pathName);
   const [navState, setNavState] = useState(false);
   const [user, setUser] = useState({ loading: true, data: null });
   const loadUser = async () => {

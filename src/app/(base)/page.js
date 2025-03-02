@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Home from "./home/Home";
 
-let apps = ["Dell", "Asus", "Acer", "HP", "Mac book", "DCL"];
+let apps = ["dell", "asus", "acer", "hp", "mac", "walton"];
 export default async function page(request) {
   return (
     <div className=" min-h-screen h-full rounded flex items-center flex-col">
@@ -9,7 +9,7 @@ export default async function page(request) {
         {apps.map((ele) => (
           <Link
             className="text-sm capitalize font-semibold  rounded px-2 text-white hover:text-red-500"
-            href={"/" + ele}
+            href={"/search?text=" + ele}
             key={ele}
           >
             {ele}

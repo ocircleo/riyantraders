@@ -35,7 +35,7 @@ const Page = async (request) => {
               <ol>
                 <li>Max images : 5</li>
                 <li>Image Ratio 16/9</li>
-                <li>Try to <Link href={"https://imageresizer.com/image-compressor/editor"} className="text-blue-600 underline underline-offset-4 italic font-semibold">Compres</Link> image first</li>
+                <li>Try to <Link href={"https://imageresizer.com/image-compressor/editor"} className="text-blue-600 underline underline-offset-4 italic font-semibold">Compares</Link> image first</li>
               </ol>
         
             <Upload data={data.result}></Upload>

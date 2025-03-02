@@ -3,7 +3,7 @@ import { queryOrganizer } from '@/app/utls/searchUrlFilter/searchUrlFilter';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 
-
+let timeout = setTimeout(()=>{},100)
 const Form = ({ setLoading, queryParams, sm }) => {
     const params = useSearchParams()
     let query = queryParams;
@@ -22,7 +22,7 @@ const Form = ({ setLoading, queryParams, sm }) => {
         checked = target.checked;
         if (!checked) delete query[name];
         else query[name] = checked;
-        if(query?.page) query.page = 0;
+        if (query?.page) query.page = 0;
         let queryString = "/search?";
         let start = true;
         for (let item in query) {
@@ -39,7 +39,7 @@ const Form = ({ setLoading, queryParams, sm }) => {
             query[key] = value;
         }
         query = queryOrganizer(query)
-        if(query?.page) query.page = 0;
+        if (query?.page) query.page = 0;
         let target, name, checked;
         target = e.target;
         name = target.dataset.name;
@@ -77,7 +77,7 @@ const Form = ({ setLoading, queryParams, sm }) => {
             query[key] = value;
         }
         query = queryOrganizer(query)
-        if(query?.page) query.page = 0;
+        if (query?.page) query.page = 0;
         let target, name, checked;
         target = e.target;
         name = target.dataset.name;
@@ -109,13 +109,43 @@ const Form = ({ setLoading, queryParams, sm }) => {
         }
         router.push(queryString)
     }
+    const priceChange = (e) => {
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+            setLoading(true)
+            query = {};
+            for (const [key, value] of params.entries()) {
+                query[key] = value;
+            }
+            query = queryOrganizer(query)
+            if (query?.page) query.page = 0;
+
+            let target, name, value;
+            target = e.target;
+            value = target.value;
+            name = target.dataset.name;
+            query[name] = Number(value);
+
+
+            //makes an url and pushes to the url stack
+            let queryString = "/search?";
+            let start = true;
+            for (let item in query) {
+                if (start) queryString += `${item}=${query[item]}`;
+                else queryString += `&${item}=${query[item]}`;
+                start = false;
+            }
+            router.push(queryString)
+        }, 1000)
+
+    }
     useEffect(() => {
         if (formRef.current) {
             if (query.inStock) formRef.current['inStock' + sm].checked = true;
-            if (query.min) formRef.current['minPrice'].value = query.min;
-            else formRef.current['minPrice'].value = 0;
-            if (query.max) formRef.current['maxPrice'].value = query.max;
-            else formRef.current['maxPrice'].value = 1000000;
+            if (query.min) formRef.current['minPrice' + sm].value = query.min;
+            else formRef.current['minPrice' + sm].value = 0;
+            if (query.max) formRef.current['maxPrice' + sm].value = query.max;
+            else formRef.current['maxPrice' + sm].value = 1000000;
             if (query.processor) query.processor.map(ele => { if (formRef.current[ele + sm]) formRef.current[ele + sm].checked = true })
             if (query.ram) query.ram.map(ele => { if (formRef.current[ele + "GB" + sm]) formRef.current[ele + "GB" + sm].checked = true })
             if (query.storage) query.storage.map(ele => { if (formRef.current["s" + ele + sm]) formRef.current["s" + ele + sm].checked = true })
@@ -131,8 +161,8 @@ const Form = ({ setLoading, queryParams, sm }) => {
             <fieldset className='flex flex-col justify-between items-start'>
                 <label htmlFor={'priceRange'} className='font-semibold  pb-2'>Price Range</label>
                 <div className=' gap-2 w-full  flex '>
-                    <input type='number' id='minPrice' placeholder='min' min={0} className='border-2 border-gray-300 rounded p-1  w-24'></input>
-                    <input type='number' id='maxPrice' placeholder='max' className='border-2 border-gray-300 rounded p-1  w-24 ms-2'></input>
+                    <input type='number' onChange={priceChange} data-name="min" id={"minPrice" + sm} placeholder='min' min={0} className='border-2 border-gray-300 rounded p-1  w-24'></input>
+                    <input type='number' onChange={priceChange} data-name="max" id={'maxPrice' + sm} placeholder='max' className='border-2 border-gray-300 rounded p-1  w-24 ms-2'></input>
                 </div>
             </fieldset>
             <fieldset className='flex gap-2 flex-col '>

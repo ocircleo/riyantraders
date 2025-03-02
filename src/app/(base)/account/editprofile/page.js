@@ -52,9 +52,9 @@ const Page = () => {
       </h2>
       <form
         onSubmit={submit}
-        className=" grid grid-cols-1 lg:grid-cols-2 gap-3"
+        className=" grid grid-cols-2 gap-3"
       >
-        <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded">
+        <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded col-span-2 lg:col-span-1">
           <label htmlFor="name" className="font-bold">
             User Name
           </label>
@@ -67,7 +67,7 @@ const Page = () => {
             defaultValue={user?.name}
           ></input>
         </fieldset>
-        <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded">
+        <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded col-span-2 lg:col-span-1">
           <label htmlFor="city" className="font-bold">
             City / Zila
           </label>
@@ -80,7 +80,7 @@ const Page = () => {
             defaultValue={user?.city}
           ></input>
         </fieldset>
-        <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded">
+        <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded col-span-2 lg:col-span-1">
           <label htmlFor="address" className="font-bold">
             Delivery address
           </label>
@@ -93,7 +93,7 @@ const Page = () => {
             defaultValue={user?.address}
           ></input>
         </fieldset>
-        <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded">
+        <fieldset className="flex flex-col gap-2 p-2  pb-5 rounded col-span-2 lg:col-span-1">
           <label htmlFor="email" className="font-bold">
             Email
           </label>
@@ -108,7 +108,7 @@ const Page = () => {
             title="You Can't Edit Email"
           ></input>
         </fieldset>
-        <fieldset className="flex flex-col gap-2 p-2  rounded">
+        <fieldset className="flex flex-col gap-2 p-2  rounded col-span-2 lg:col-span-1">
           <label htmlFor="phone" className="font-bold">
             Phone Number
           </label>
@@ -124,7 +124,7 @@ const Page = () => {
           ></input>
         </fieldset>
         <div className="mt-6 col-span-2 flex items-center justify-center ">
-          <button className="bg-green-500 full lg:w-1/2 text-white font-semibold py-3 rounded  hover:bg-indigo-400 active:scale-95 duration-100">
+          <button className="bg-green-500 w-full lg:w-1/2 text-white font-semibold py-3 rounded  hover:bg-indigo-400 active:scale-95 duration-100">
             Update Information
           </button>
         </div>

@@ -22,8 +22,8 @@ const Page = (request) => {
     );
   return (
     <>
-      <div className="flex flex-col gap-4 w-5/6 mx-auto pt-12">
-        <div className="text-xl font-medium">Order Overview</div>
+      <div className="flex flex-col gap-2 lg:gap-4 w-5/6 mx-auto pt-3 lg:pt-12">
+        <div className="text-lg lg:text-xl font-medium">Order Overview</div>
         <div className=" w-full">
           <div className="w-full ">
             {itemArray.map((ele, index) => (

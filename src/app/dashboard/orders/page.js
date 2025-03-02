@@ -3,29 +3,31 @@ import { API } from "@/app/utls/api/API";
 import NextPrev from "@/app/utls/nextprev/NextPrev";
 import NextPrevFunc from "@/app/utls/nextprev/NextPrevFun";
 import { useEffect, useRef, useState } from "react";
-import Item from "./Item";
 import Pagination from "@/app/utls/pagination/Paginate";
+import { ImCross } from "react-icons/im";
+
+import OrderItem from "./OrderItem";
 import {
-  getSingleLapBlock,
-  setMultiLap,
-  setSingLapBlock,
-} from "@/app/utls/db/LaptopDB";
+  getSingleOrderBlock,
+  resetOrder,
+  setSingOrderBlock,
+} from "@/app/utls/db/OrdersDB";
 const Page = () => {
   const [items, setItems] = useState({ loading: true, data: [] });
   const [pages, setPages] = useState({ current: 0, length: 0 });
   const formRef = useRef(null);
-  const fetchData = async (text, price, stock, page) => {
+  const fetchData = async (phone, status, page) => {
     setItems({ loading: true, data: [] });
     try {
       const response = await fetch(
-        `${API}user/search_items_admin?text=${text}&stock=${stock}&sort=${price}&page=${page}`,{cache:"no-cache"}
+        `${API}order/searchOrders?phone=${phone}&status=${status}&page=${page}`,
+        { cache: "no-cache" }
       );
       const data = await response.json();
       setPages({ current: page, length: data.result.length });
       setItems({ loading: false, data: data.result.data });
-      let queryString = text + stock + price; // For validating if search params changed
-      setMultiLap(data?.result?.data); // for finding on info using id quickly (caching data)
-      setSingLapBlock(page, data?.result?.data, queryString); //for page like page 0, 1 to etc. (caching data)
+      let queryString = phone; // For validating if search params changed
+      setSingOrderBlock(page, data?.result?.data, queryString); //for page like page 0, 1 to etc. (caching data)
     } catch (error) {
       console.log(error);
     }
@@ -33,16 +35,15 @@ const Page = () => {
 
   let timeout;
   const formChange = (page, timer = 400) => {
-    let text, price, stock;
+    let phone, status;
     if (formRef.current) {
       let form = formRef.current;
-      text = form.model.value;
-      price = form.price.value;
-      stock = form.stock.value;
+      phone = form.model.value;
+      status = form.status.value;
     }
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-      fetchData(text, price, stock, page);
+      fetchData(phone, status, page);
     }, timer);
   };
   const submitForm = (e) => {
@@ -50,7 +51,7 @@ const Page = () => {
     formChange(0);
   };
   const paginate = (to) => {
-    const cachedData = getSingleLapBlock(to);
+    const cachedData = getSingleOrderBlock(to);
     if (cachedData) {
       setItems({ loading: false, data: cachedData });
       setPages({ current: to, length: pages.length });
@@ -61,13 +62,17 @@ const Page = () => {
     formChange(to, 0);
   };
   useEffect(() => {
-    fetchData("", 0, null, 0);
+    fetchData("", "Pending", 0);
   }, []);
+  const refreshData = () => {
+    resetOrder();
+    fetchData("", "Pending", 0);
+  };
   return (
     <div className="bg-stone-200/80 min-h-full px-6 py-3 flex justify-between flex-col">
       <div>
         <h2 className=" text-stone-800 font-bold border-b-2 border-dashed border-b-stone-500 mb-3 text-xl pt-2 pb-5">
-          Edit items
+          Current Orders
         </h2>
         <form
           onSubmit={submitForm}
@@ -75,66 +80,61 @@ const Page = () => {
           onChange={submitForm}
           className="flex justify-between flex-wrap gap-2 md:gap-4 lg:gap-6"
         >
-          <fieldset className="flex flex-col gap-2 flex-grow">
+          <fieldset className="flex flex-col relative  gap-2 flex-grow">
             <label htmlFor="model" className="font-semibold">
-              Laptop Model
+              Phone Number
             </label>
             <input
               type="text"
               name="model"
-              placeholder="Laptop Model"
+              placeholder="Enter Phone Number"
               id="model"
               className="py-3 px-2 bg-white rounded outline-indigo-500 w-full "
             ></input>
+            <button type="reset" className=" p-2  absolute bottom-2 right-1">
+              <ImCross />
+            </button>
           </fieldset>
           <fieldset className="flex flex-col gap-2">
-            <label htmlFor="price" className="font-semibold">
-              Price{" "}
+            <label htmlFor="status" className="font-semibold">
+              Status
             </label>
             <select
-              id="price"
-              name="price"
+              id="status"
+              name="status"
               className="py-3 px-2 bg-white rounded outline-indigo-500"
             >
-              <option value={0}>default</option>
-              <option value={-1}>High to low</option>
-              <option value={1}>Low to high</option>
-            </select>
-          </fieldset>
-          <fieldset className="flex flex-col gap-2">
-            <label htmlFor="stock" className="font-semibold">
-              Stock{" "}
-            </label>
-            <select
-              id="stock"
-              name="stock"
-              className="py-3 px-2 bg-white rounded outline-indigo-500"
-            >
-              <option value={"null"}>default</option>
-              <option value={"in"}>In Stock</option>
-              <option value={"out"}>Out of Stock</option>
+              <option value={""}>Default</option>
+              <option selected value={"Pending"}>
+                Pending
+              </option>
+              <option value={"Processing"}>Processing</option>
+              <option value={"Shipped"}>Shipped</option>
+              <option value={"Delivered"}>Delivered</option>
+              <option value={"Canceled"}>Canceled</option>
             </select>
           </fieldset>
         </form>
         <div className="bg-indigo-400 text-white grid grid-cols-12 text-xs sm:text-sm md:text-base p-2 justify-items-center mt-4">
           <div className="col-span-1">Index</div>
-          <div className="col-span-3">Brand</div>
-          <div className="col-span-3">Model</div>
+          <div className="col-span-3">Name</div>
+          <div className="col-span-3">Phone</div>
           <div className="col-span-2">Price</div>
-          <div className="col-span-2">Stock</div>
-          <div className="col-span-1">Edit</div>
+          <div className="col-span-2">Address</div>
+          <div className="col-span-1">More</div>
         </div>
         {items.loading ? (
           <p className="text-center py-12 text-lg font-semibold">Loading ...</p>
         ) : (
           <>
             {items?.data.map((ele, index) => (
-              <Item
+              <OrderItem
+                refreshData={refreshData}
                 key={index}
                 index={index}
                 currentPage={pages.current}
                 data={ele}
-              ></Item>
+              ></OrderItem>
             ))}
           </>
         )}
@@ -148,10 +148,10 @@ const Page = () => {
       <Pagination current={pages.current} paginate={paginate}></Pagination>
       <NextPrev
         info={NextPrevFunc(
+          "/dashboard/dashboard",
+          "Dashboard",
           "/dashboard/addItem",
-          "Add Item",
-          "/dashboard/users",
-          "Users"
+          "Add Item"
         )}
       ></NextPrev>
     </div>

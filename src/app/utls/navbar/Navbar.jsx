@@ -11,7 +11,10 @@ import logo from "/public/logo2.png"
 import getUser, { clearUser } from "../db/UserDB";
 import CartIcon from "./CartIcon";
 import emitter from "../mitt/Mit";
-
+import { IoSearch } from "react-icons/io5";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { RxCross2 } from "react-icons/rx";
+import { MdAccountCircle } from "react-icons/md";
 const Navbar = () => {
   const [navState, setNavState] = useState(false)
   const [user, setUser] = useState(null);
@@ -39,7 +42,7 @@ const Navbar = () => {
       id: 1,
     },
     {
-      to: "/it-support",
+      to: "/itsupport",
       title: "It Support",
       id: 6,
     },
@@ -53,7 +56,7 @@ const Navbar = () => {
   const toggleNav = () => setNavState(!navState)
   return (
     <>
-      <nav className="h-16 w-full fixed top-0 bg-white/30 backdrop-blur-md  flex justify-between items-center px-4 md:px-6 lg:px-10 gap-2 shadow z-[111]">
+      <nav className="h-16 w-full fixed top-0 bg-white/30 backdrop-blur-md  flex justify-between items-center px-6 lg:px-10 gap-2 shadow z-[111]">
         <Link href={"/"} className="relative flex items-center  flex-col">
           <Image alt="Ryan traders logo" src={logo} height={40} width={150} className="scale-50 origin-left lg:scale-75 xl:scale-90 2xl:scale-100 bg-transparent"></Image>
         </Link>
@@ -62,7 +65,7 @@ const Navbar = () => {
         <div className=" gap-3 items-center flex">
           <div className=" hidden md:flex items-center gap-2">
             <ActiveNavLink to={"/"}>Home</ActiveNavLink>
-            <ActiveNavLink to={"/it"}>It Support</ActiveNavLink>
+            <ActiveNavLink to={"/itsupport"}>It Support</ActiveNavLink>
             <CartIcon></CartIcon>
             <div className="hidden md:flex gap-2 ms-4 p-2 border border-red-100  rounded">
               {
@@ -83,53 +86,26 @@ const Navbar = () => {
               }
             </div>
           </div>
-          <div className="flex md:hidden">
+          <div className="flex md:hidden items-center gap-2">
+            <Link href={"/search"} className="text-lg font-bold">
+              <IoSearch />
+            </Link>
             <CartIcon></CartIcon>
-
           </div>
           {/* Navbar toggler for small screen -- below  */}
-          <div
-            onClick={toggleNav}
-            className={`h-8 w-8 cursor-pointer rounded  flex gap-[3px]  px-1 items-center justify-center flex-col md:hidden active:scale-90 duration-100 overflow-hidden`}
-          >
-            <div
-              className={`h-1 bg-black w-full duration-200`}
-            ></div>
-            <div
-              className={`h-1 bg-black w-full duration-200`}
-            ></div>
-            <div
-              className={`h-1 bg-black w-full duration-200`}
-            ></div>
+          <div onClick={toggleNav} className={`text-2xl   md:hidden active:scale-90 duration-100 overflow-hidden`}>
+            {navState ? <RxCross2 /> : <GiHamburgerMenu />}
           </div>
         </div>
       </nav >
       <div className="h-16 w-full bg-white"></div>
       {/* //Small Screen  sidebar -- below */}
-      <div
-        onClick={() => setNavState(!navState)}
-        title="nav-links"
-        className={`min-h-screen w-full bg-white fixed top-0 z-[110]  ${navState ? "block" : "invisible pointer-events-none"
-          }`}
-      >
-        <div className="font-semibold flex justify-between p-3  border bg-blue-400">
-          <h3 className="text-lg ">Important Links</h3>
-          <div
-            onClick={toggleNav}
-            className={`h-8 w-8 cursor-pointer rounded  flex gap-[3px] px-1 items-center justify-center flex-col md:hidden active:scale-90 duration-100 overflow-hidden`}
-          >
-            <div
-              className={`h-1 bg-black w-full ${nav.active}`}
-            ></div>
+      <div onClick={() => setNavState(!navState)} title="nav-links" className={`min-h-screen w-full bg-white fixed top-0 z-[110]  ${navState ? "block" : "invisible pointer-events-none"
+        } md:invisible md:pointer-events-none`}>
 
-            <div
-              className={`h-1 bg-black w-full ${nav.active2}`}
-            ></div>
-          </div>
-        </div>
         <div
           onClick={(e) => e.preventDefault()}
-          className={`fixed top-16 duration-200  w-full overflow-y-scroll sm:w-80 bg-white h-screen flex flex-col gap-3 p-3 text-center ${navState ? "right-0" : "-right-full sm:-right-80"
+          className={`fixed top-16 duration-200  w-full overflow-y-scroll  bg-gray-100 h-screen flex flex-col gap-3 p-3 text-center ${navState ? "right-0" : "-right-full"
             }`}
         >
           {navLinks.map((ele) => (
@@ -145,7 +121,7 @@ const Navbar = () => {
           >
             {
               user ? <>
-                <Link href={user.role == "admin" ? "/dashboard" : "/account"}>{user.name}</Link>
+                <Link className="bg-white py-2 capitalize font-bold flex items-center gap-2 justify-center" href={user.role == "admin" ? "/dashboard" : "/account"}><MdAccountCircle /> {user.name}</Link>
                 <button
                   className="bg-red-500 text-black px-3 py-1 rounded font-semibold shadow-inner"
                   onClick={logOut}

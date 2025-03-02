@@ -8,9 +8,10 @@ const LayoutCompo = ({ children, user }) => {
     const toggleNav = () => setNavState(!navState);
     const adminLinks = [
         { path: "/dashboard", text: "Dashboard" },
+        { path: "/dashboard/orders", text: "Orders" },
         { path: "/dashboard/addItem", text: "Add Item" },
         { path: "/dashboard/editItem", text: "Edit Item" },
-        { path: "/dashboard/statistics", text: "Statistics" },
+        // { path: "/dashboard/statistics", text: "Statistics" },
         { path: "/dashboard/users", text: "Users" },
         { path: "/dashboard/messages", text: "Messages" },
         { path: "/dashboard/editProfile", text: "Edit Profile" },

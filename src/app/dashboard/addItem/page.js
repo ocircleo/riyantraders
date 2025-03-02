@@ -102,8 +102,8 @@ const Page = () => {
 
       <NextPrev
         info={NextPrevFunc(
-          "/dashboard/",
-          "Dashboard Home",
+          "/dashboard/orders",
+          "Orders",
           "/dashboard/editItem",
           "Edit Item"
         )}

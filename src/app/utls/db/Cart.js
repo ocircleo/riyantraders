@@ -36,5 +36,4 @@ const isOnCart = (id) => {
   }
 };
 const GetCart = () => getLocalData();
-
 export { ToggleAddCart, isOnCart, GetCart };

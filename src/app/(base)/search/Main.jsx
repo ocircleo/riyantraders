@@ -12,8 +12,8 @@ const Main = async ({ data, query, paginate }) => {
             </div>
             <Paginate query={query} paginate={paginate}></Paginate>
         </div>
-    );
-
+    )
+    else return <div className='text-xl grid place-content-center w-full py-16 font-semibold'>No data found</div>
 }
 
 export default Main;

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation';
 import React, { useRef } from 'react';
-
+let timeout = setTimeout(()=>{},100)
 const Form = ({ sm = 1 }) => {
     let query = {};
 
@@ -58,6 +58,31 @@ const Form = ({ sm = 1 }) => {
         }
         router.push(queryString)
     }
+    const priceChange = (e) => {
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+            query = {};
+            if (query?.page) query.page = 0;
+
+            let target, name, value;
+            target = e.target;
+            value = target.value;
+            name = target.dataset.name;
+            query[name] = Number(value);
+
+
+            //makes an url and pushes to the url stack
+            let queryString = "/search?";
+            let start = true;
+            for (let item in query) {
+                if (start) queryString += `${item}=${query[item]}`;
+                else queryString += `&${item}=${query[item]}`;
+                start = false;
+            }
+            router.push(queryString)
+        }, 1000)
+
+    }
     return (
         <form ref={formRef} className='flex flex-col gap-4 px-4 pb-8' action='/search'>
             <fieldset className='flex gap-2 items-center'>
@@ -67,8 +92,8 @@ const Form = ({ sm = 1 }) => {
             <fieldset className='flex flex-col justify-between items-start'>
                 <label htmlFor={'priceRange'} className='font-semibold  pb-2'>Price Range</label>
                 <div className=' gap-2 w-full  flex '>
-                    <input type='number' id='minPrice' placeholder='min' min={0} className='border-2 border-gray-300 rounded p-1  w-24'></input>
-                    <input type='number' id='maxPrice' placeholder='max' className='border-2 border-gray-300 rounded p-1  w-24 ms-2'></input>
+                    <input type='number' onChange={priceChange} data-name="min" id={"minPrice" + sm} placeholder='min' min={0} className='border-2 border-gray-300 rounded p-1  w-24'></input>
+                    <input type='number' onChange={priceChange} data-name="max" id={'maxPrice' + sm} placeholder='max' className='border-2 border-gray-300 rounded p-1  w-24 ms-2'></input>
                 </div>
             </fieldset>
             <fieldset className='flex gap-2 flex-col '>

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { setCookie } from "../../utls/cookie/Cookie";
-import { setAuthInfo } from "../../utls/auth/AuthInfo";
+import { setAuthInfo } from "../../utls/auth/Auth";
 import { useRouter } from "next/navigation";
 import { API } from "@/app/utls/api/API";
 import emitter from "@/app/utls/mitt/Mit";
@@ -40,7 +40,7 @@ const Register = () => {
     router.back();
   };
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-white px-2">
+    <div className="md:min-h-screen mb-24 md:mb-0 w-full flex items-center justify-center bg-white px-2">
       <div className="w-full md:w-[27rem] bg-white border rounded  p-7 ">
         <h1 className="text-xl font-bold py-4 capitalize">
           Register a new account
@@ -78,7 +78,7 @@ const Register = () => {
             </label>
             <div className="flex gap-2">
               <span className="bg-gray-200 border rounded font-semibold shad ps-1 pe-3 flex items-center">
-                +88
+                +880
               </span>
               <input
                 type="number"

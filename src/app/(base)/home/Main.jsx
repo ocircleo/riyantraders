@@ -24,7 +24,7 @@ const Main = async ({ request }) => {
 
             {dataArray.length == 0 ? <div className='grid place-content-center h-screen bg-gray-100 text-center text-2xl w-full '>No data found</div> : null}
 
-            <div className='bg-white w-full h-fit grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-4'>
+            <div className='bg-white w-full h-fit grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-4 px-10 md:px-0'>
                 {
                     dataArray.map((item, index) => <LaptopCard key={index} laptop={item}></LaptopCard>)
                 }

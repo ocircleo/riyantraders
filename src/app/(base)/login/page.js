@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { setAuthInfo } from "../../utls/auth/AuthInfo";
+import { setAuthInfo } from "../../utls/auth/Auth";
 import { setCookie } from "../../utls/cookie/Cookie";
 import { API } from "@/app/utls/api/API";
 import emitter from "@/app/utls/mitt/Mit";
@@ -37,7 +37,7 @@ const Login = () => {
     router.back();
   };
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-white px-2">
+    <div className="md:min-h-screen mb-24 md:mb-0 w-full flex items-center justify-center bg-white px-2">
       <div className="w-full md:w-[27rem] bg-white border rounded  p-7 ">
         <h1 className="text-xl font-bold py-4">Login To your Account</h1>
         <form className="flex flex-col gap-3" onSubmit={submitForm}>

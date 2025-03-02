@@ -1,8 +1,8 @@
 'use client'
 import React, { useState } from 'react';
-import TwoPointSlider from './TwoPointSlider';
 import Form from './Form';
-
+import { IoFilterSharp } from "react-icons/io5";
+import { ImCross } from "react-icons/im";
 const Sidebar = () => {
     const [open, setOpen] = useState(false)
     /**
@@ -18,8 +18,8 @@ const Sidebar = () => {
     return (
         <>
             {/* Small screen sidebar toggler */}
-            <div className='flex items-center justify-between bg-white px-4 py-1 lg:hidden'>
-                <button className='' onClick={() => setOpen(true)}>Filters</button>
+            <div className='flex items-center justify-between bg-white px-4 py-1 lg:hidden border-b-2 pb-2'>
+                <button className='flex gap-2 items-center' onClick={() => setOpen(true)}><span>Filters</span> <IoFilterSharp /></button>
                 <div className='flex gap-2'>
                     <p>Price</p>
                     <select className='border-2 bg-gray-200'>
@@ -30,10 +30,10 @@ const Sidebar = () => {
                 </div>
             </div>
             {/* small screen sidebar */}
-            <div className={`bg-white shadow border p-3 w-full ${open ? " left-0" : "-left-full"} flex flex-col lg:hidden lg:w-0 absolute top-0 h-fit duration-100` } style={{zIndex:"111"}}>
+            <div className={`bg-white shadow border p-3 w-full ${open ? " left-0" : "-left-full"} flex flex-col lg:hidden lg:w-0 fixed top-0 h-screen overflow-y-scroll duration-100`} style={{ zIndex: "111" }}>
                 <div className='flex justify-between w-full border-b-2  mb-3 pb-2'>
                     <p className='font-semibold'>Filters</p>
-                    <button onClick={() => setOpen(false)}>❌</button>
+                    <button onClick={() => setOpen(false)}><ImCross /></button>
                 </div>
                 <Form></Form>
             </div>

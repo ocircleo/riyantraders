@@ -30,14 +30,7 @@ const SubmitOrder = () => {
         return () => emitter.off("orderUpdated")
     }, [])
     return (
-        <div className='w-full flex flex-col-reverse lg:flex-row justify-between p-6  h-full gap-1'>
-            <div className='my-4'>
-                <p className='font-semibold pb-2'>Payment Method</p>
-                <input type='radio' name='paymentMethod' value={"cod"} id='cod' />
-                <label htmlFor="cod" className='ms-2 '>Cash on Delivery  </label><br />
-                <input type='radio' name='paymentMethod' className='pointer-events-none' value={"coo"} id='coo' defaultChecked />
-                <label htmlFor="coo" className='ms-2 pointer-events-none'>Online Payment <span className='text-xs font-semibold'>(Unavailable)</span></label><br />
-            </div>
+        <div className='w-full flex flex-col-reverse lg:flex-row justify-end p-6  h-full gap-1'>
             <div>
                 <p className=''>Total Items: {total.total}</p>
                 <p className=''>Price:<span className='font-semibold'> {total.price} Taka</span> </p>

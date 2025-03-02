@@ -1,50 +1,48 @@
 "use client";
-const page = () => {
-  const submitForm = (e) => {
+
+import { API } from "@/app/utls/api/API";
+
+const Page = () => {
+
+  const submitForm = async (e) => {
     e.preventDefault();
     const form = e.target;
+    let button = form.submit;
+    button.innerText = "Sending...";
     const name = form.name.value || "not provided";
     const email = form.email.value;
-    const subject = form.subject.value || "not provided";
     const message = form.message.value;
-    if (!email) {
-      setEmailError("please enter an email");
-      return;
-    }
-    if (!message) {
-      setEmailError("");
-      setFormError("please enter you message");
-      return;
-    }
-    setEmailError(""), setFormError("");
+
     const data = {
       name: name,
       email: email,
-      subject: subject,
       message: message,
     };
-    fetch("https://moonknight-backend.vercel.app/user/contact", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.insertedId) {
-          form.reset();
-          toast("Message send");
-        }
-      })
-      .catch((error) => {
-        toast("Sorry error: " + error.message);
+    try {
+      let req = await fetch(API + "user/sendMessage", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(data),
       });
+      let res = await req.json();
+      if (res.error) return (button.innerText = "Failed");
+      button.innerText = "Message Sent";
+      form.reset();
+      setTimeout(() => {
+        button.innerText = "Send Message";
+      }, 2000);
+    } catch (error) {
+      console.log(error);
+      button.innerText = "Failed";
+    }
   };
 
   return (
     <div className="w-full p-3 lg:w-5/6 mx-auto grid grid-cols-5 gap-6">
       <div className="col-span-5 md:col-span-3  sm:rounded-md border p-6">
         <h1 className="text-black text-2xl font-bold  py-6" id="contact">
-          Send Us An Message
+          Send Us An Message 
+          
         </h1>
         <hr className="pl-6 pe-6" />
         <div>
@@ -67,6 +65,7 @@ const page = () => {
                 </label>
                 <input
                   type="text"
+                  required
                   name="email"
                   id="email_address"
                   placeholder="Enter Your Email"
@@ -76,6 +75,7 @@ const page = () => {
               <div className="col-span-12 py-2">
                 <label className="pb-2 font-medium ">Description</label>
                 <textarea
+                  required
                   name="message"
                   rows={8}
                   className="mt-1 focus:bg-white bg-slate-100 p-2 focus:border-indigo-200 block w-full shadow-sm sm:text-sm border-slate-200 rounded-md"
@@ -85,8 +85,9 @@ const page = () => {
 
               <div className="py-3">
                 <button
+                  id="submit"
                   type="submit"
-                  className="bg-red-500 rounded px-4 py-3 font-semibold text-white w-full"
+                  className="bg-red-500 hover:bg-green-400 rounded px-4 py-3 font-semibold text-white w-full active:scale-90 duration-100"
                 >
                   Send Message
                 </button>
@@ -107,10 +108,10 @@ const page = () => {
             <h2 className="text-lg font-bold pt-3">Email Us</h2>
             <p className="text-gray-700 pt-3">bd.raiyantraders@gmail.com</p>
           </div>
-          <div className="flex rounded border p-2 flex-col">
+          {/* <div className="flex rounded border p-2 flex-col">
             <h2 className="text-xl font-bold pt-3">Location</h2>
             <p className="text-gray-700 pt-2">123 Digital Avenue, Dhaka</p>
-          </div>
+          </div> */}
         </section>
 
         {/* <div className="pt-14">
@@ -123,4 +124,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

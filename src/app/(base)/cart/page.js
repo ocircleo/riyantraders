@@ -30,7 +30,7 @@ const Page = () => {
   return (
     <div className="w-5/6 mx-auto mb-12">
       <h1 className="text-2xl font-bold  mt-4">
-        Cart Items{" "}
+        Cart Items
       </h1>
       <button
         onClick={selectAll}

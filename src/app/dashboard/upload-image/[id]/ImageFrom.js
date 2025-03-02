@@ -2,7 +2,6 @@
 import { API } from "@/app/utls/api/API";
 import { getCookie } from "@/app/utls/cookie/Cookie";
 import FireApp from "@/app/utls/FireApp/FireApp";
-import { textWash } from "@/app/utls/searchbar/TextFilter";
 import {
   deleteObject,
   getDownloadURL,
@@ -11,10 +10,15 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { useRouter } from "next/navigation";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 const ImageFrom = ({ data, imgUrl, targetIndex }) => {
   const router = useRouter();
   const imgRef = useRef(null);
+  const [upload, setUpload] = useState({
+    status: false,
+    progress: 0,
+    error: false,
+  });
   let storage = getStorage(FireApp);
   //upload image function
   const handelFileChange = async (e) => {
@@ -50,12 +54,18 @@ const ImageFrom = ({ data, imgUrl, targetIndex }) => {
       (snapshot) => {
         // Observe state change events such as progress, pause, and resume
         // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
+        const UpProgress =
+          parseFloat((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed(2);
+        setUpload((prevState) => {
+          return { status: true, progress: UpProgress, error: false };
+        });
+        console.log("Upload is " + UpProgress + "% done");
       },
       (error) => {
         // Handle unsuccessful uploads
+        setUpload((prevState) => {
+          return { ...prevState, error: true };
+        });
         console.log("Error happened: ", error.message);
       },
       () => {
@@ -78,6 +88,11 @@ const ImageFrom = ({ data, imgUrl, targetIndex }) => {
             const result = await res.json();
 
             // console.log("Image upload success message: ", result);
+            setUpload({
+              status: false,
+              progress: 0,
+              error: false,
+            })
             if (imgRef.current) {
               imgRef.current.setAttribute("src", url);
             }
@@ -137,6 +152,7 @@ const ImageFrom = ({ data, imgUrl, targetIndex }) => {
   };
   return (
     <div className="relative rounded aspect-video w-full lg:w-1/2 p-2 float-left overflow-hidden">
+      {/* upload and delete button below  */}
       <div className="absolute top-0 right-0 rounded  flex gap-2 p-2 z-30">
         <fieldset className="relative bg-red-200/20 p-1 ">
           <label
@@ -161,7 +177,17 @@ const ImageFrom = ({ data, imgUrl, targetIndex }) => {
           Delete
         </button>
       </div>
+      {/* The main image  */}
       <div className="h-full w-full rounded-md overflow-hidden relative">
+        {upload.status ? (
+          <div className="absolute z-30 w-full h-full flex flex-col items-center justify-center bg-gray-300">
+            <p className="text-sm text-red-400">{upload.error ? "Error happened" : ""} </p>
+            {upload.error ? <button className="text-green-400 px-5 py-2 text-sm active:scale-95 duration-100" onClick={()=>setUpload({status: false, progress: 0, error: false,})}>Close</button>:""}
+            Uploading <p>{upload.progress}%</p>
+          </div>
+        ) : (
+          ""
+        )}
         <img
           ref={imgRef}
           src={imgUrl}

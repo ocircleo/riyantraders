@@ -17,7 +17,7 @@ const CartCard = ({ id }) => {
                 if (result.error) setData({ loading: false, error: result.message, data: {} });
                 else setData({ loading: false, error: null, data: result.result });
 
-                console.log(result);
+           
             } catch (error) {
                 setData({ loading: false, error: error.message, data: {} })
             }
@@ -42,9 +42,13 @@ const CartCard = ({ id }) => {
 
     if (data.loading) return <div className="bg-gray-50 border-2 rounded flex flex-col lg:flex-row gap-1 py-5 lg:pr-6 items-center justify-center w-full lg:h-36 ">
         Loading....
+
     </div>
-    if (data.error) return <div className="bg-gray-50 border-2 rounded flex flex-col lg:flex-row gap-1 py-5 lg:pr-6 items-center justify-center w-full lg:h-36 ">
-        Error : {data.error}
+    if (data.error) return <div className={`bg-gray-50 border-2 rounded  ${hidden ? "hidden" : "flex"} flex-col lg:flex-row gap-1 py-5 lg:pr-6 items-center justify-between px-3 md:px-8 w-full lg:h-36 `}>
+        <p className='text-red-500 font-semibold'> Error: {data.error}
+            <br /> Please Try to reload
+        </p>
+        <button onClick={deleteItem} className='bg-red-500 px-5 py-2 rounded text-white font-semibold'>Delete</button>
     </div>
     return (
 

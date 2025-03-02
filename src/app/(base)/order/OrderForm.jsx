@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useRef } from 'react';
-import { DecrementOrder, DeleteOrder, GetOrder, GetOrderId, IncrementOrder, SetOrder } from './OrderState';
+import { DecrementOrder, DeleteOrder, GetOrderId, IncrementOrder, SetOrder } from './OrderState';
 import emitter from '@/app/utls/mitt/Mit';
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation';
@@ -10,14 +10,11 @@ const OrderForm = ({ data }) => {
     const router = useRouter();
     const emit = () => emitter.emit("orderUpdated")
     useEffect(() => {
-        const prevOrder = GetOrderId(data._id)
-        if (!prevOrder) SetOrder(data._id, data, 1);
-        else {
-            if (counterRef.current) {
-                counterRef.current.innerText = prevOrder.quantity;
-            }
-        }
+        SetOrder(data._id, data, 1);
     }, [data, data._id])
+
+
+
     const increment = () => {
         IncrementOrder(data._id)
         emit();
@@ -35,9 +32,9 @@ const OrderForm = ({ data }) => {
         emit()
         let urlArray = searchParams.get("items");
         urlArray = urlArray.split(",");
-       
+
         let newArrayUrl = urlArray.filter(ele => ele != data._id)
-   
+
         router.replace("/order?items=" + newArrayUrl);
     }
     return (
