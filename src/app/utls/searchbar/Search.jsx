@@ -5,17 +5,24 @@ import { useEffect, useRef } from 'react';
 import { queryOrganizer } from '../searchUrlFilter/searchUrlFilter';
 const Search = ({ invisible = "lg" }) => {
     const searchParams = useSearchParams();
-    let finalQueryRef = useRef({})
     const formRef = useRef("");
-    useEffect(() => {
+    let getQuery = () => {
         let searchQuery = {}
         for (const [key, value] of searchParams.entries()) {
             searchQuery[key] = value;
         }
-        let queryObj = queryOrganizer(searchQuery);
-        finalQueryRef.current = queryObj;
+        return searchQuery;
+    }
+    useEffect(() => {
+        console.log("serchParams : ", searchParams.toString());
+        let searchQuery = {}
+        for (const [key, value] of searchParams.entries()) {
+            searchQuery[key] = value;
+        }
+        console.log(searchQuery.text);
         if (formRef.current) {
-            if (queryObj.text) formRef.current.value = textWash(queryObj.text)
+            if (searchQuery.text) formRef.current.value = textWash(searchQuery.text)
+            else formRef.current.value = ""
         }
     }, [searchParams])
     let router = useRouter()
@@ -23,7 +30,7 @@ const Search = ({ invisible = "lg" }) => {
         e.preventDefault();
         let queryString = "/search?";
         let start = true;
-        let query = finalQueryRef.current;
+        let query = getQuery();
         for (let item in query) {
             if (item == "text") continue;
             if (start) queryString += `${item}=${query[item]}`;

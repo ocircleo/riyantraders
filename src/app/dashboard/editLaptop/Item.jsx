@@ -10,16 +10,17 @@ const Item = ({ data, index, currentPage }) => {
                 {newIndex}
             </div>
             <div className="col-span-3 capitalize font-semibold">
-                {data.title}
+                {data.laptop.brand}
 
             </div>
 
+            <div className="col-span-3  capitalize">
+                {data.laptop.model}  </div>
+            <div className="col-span-2  ">{data.laptop.price}</div>
 
-            <div className="col-span-2  ">{data.price}</div>
-
-            <div className="col-span-2  ">{data.stock}</div>
+            <div className="col-span-2  ">{data.laptop.stock}</div>
             <div className="col-span-1"> <Link
-                href={"/dashboard/editItem/" + data._id}
+                href={"/dashboard/editLaptop/" + data._id}
                 className=" hover:text-indigo-500"
             ><FaRegEdit /></Link></div>
 

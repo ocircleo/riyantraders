@@ -1,8 +1,10 @@
 import { API } from '@/app/utls/api/API';
-import LaptopCard from '@/app/utls/laptopCard/LaptopCard';
+import LaptopCard from '@/app/utls/DataCard/DataCard';
 import React from 'react';
 import Paginate from './Paginate';
 import PaginateItem from './Paginate';
+import DataCard from '@/app/utls/DataCard/DataCard';
+import Link from 'next/link';
 
 const Main = async ({ request }) => {
     let searchParams = request?.searchParams
@@ -26,13 +28,11 @@ const Main = async ({ request }) => {
 
             <div className='bg-white w-full h-fit grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-4 px-10 md:px-0'>
                 {
-                    dataArray.map((item, index) => <LaptopCard key={index} laptop={item}></LaptopCard>)
+                    dataArray.map((item, index) => <DataCard key={index} data={item}></DataCard>)
                 }
             </div>
             <div className='flex gap-2 my-6 items-center w-full justify-center'>
-                {
-                    length.map(ele => <PaginateItem key={ele} length={length.length} current={ele} request={page} ></PaginateItem>)
-                }
+                <Link href={"/search?page=0"} className='bg-red-500 text-white px-8 hover:bg-red-400 active:scale-95 duration-100 py-2  font-semibold'>View More</Link>
 
             </div>
         </div>

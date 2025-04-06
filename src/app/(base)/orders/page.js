@@ -6,7 +6,7 @@ const Page = async (request) => {
   const id = request.searchParams.id;
   try {
     let url = API + "order/ordersById/" + id;
-    const res = await fetch(url);
+    const res = await fetch(url, { cache: "no-cache" });
     const data = await res.json();
     if (data.error) return <div>Error: {data.message}</div>;
     let totalQuantity = 0;
@@ -23,16 +23,17 @@ const Page = async (request) => {
         </p>
         <p>
           <span className="font-semibold">Shipment Date: </span>
-          {data.result.orderStatus == "Pending" ? data.result.shipmentDate : ""}
+          {data.result.shipmentDate.split("T")[0]}
         </p>
         <p>
-          Payment-Method: 
+          Payment-Method:
           <span className="font-semibold">
             {data.result.paymentMethod == "COD"
-              ?  " Cash On Delivery"
+              ? " Cash On Delivery"
               : " Online Payment"}
           </span>
-          <span className="text-blue-500"> |</span> Paid: {data.result?.paid || 0} Taka
+          <span className="text-blue-500"> |</span> Paid:{" "}
+          {data.result?.paid || 0} Taka
         </p>
         <p className="pt-4 font-semibold">Customer Info:</p>
         <p className="">Name: {data.result.name}</p>

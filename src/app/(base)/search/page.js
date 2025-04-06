@@ -8,9 +8,12 @@ import Search from "@/app/utls/searchbar/Search";
 
 const page = async (request) => {
   let queryParams = request.searchParams;
-  let finalQuery = queryOrganizer(queryParams);
+  let finalQuery = {};
+  for (const data in queryParams) {
+    finalQuery[data] = queryParams[data];
+  }
   if (!finalQuery?.page) finalQuery.page = 0;
-  let queryString = API + "user/search?";
+  let queryString = API + "user/search_any?";
   let start = true;
   for (let item in finalQuery) {
     if (start) queryString += `${item}=${finalQuery[item]}`;
@@ -31,10 +34,10 @@ const page = async (request) => {
   }
   return (
     <div className="w-full">
-        <Search invisible="lg"></Search>
+      <Search invisible="lg"></Search>
       <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-5/6 relative py-4 mx-auto">
-        <Sidebar data={data} request={finalQuery}></Sidebar>
-        <section className="w-full">
+        {/* <Sidebar data={data} request={finalQuery}></Sidebar> */}
+        <section className=" w-full">
           <TopSection></TopSection>
           <div>
             <Main data={data} query={finalQuery} paginate={paginate}></Main>

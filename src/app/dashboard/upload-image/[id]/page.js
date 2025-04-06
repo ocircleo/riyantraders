@@ -6,9 +6,11 @@ import Upload from "./Upload";
 import Link from "next/link";
 const Page = async (request) => {
   const { id } = request.params;
+  let queryParams = request.searchParams;
+  let type = queryParams["type"];
   let res, data;
   try {
-    res = await fetch(API + "user/laptop_id/" + id, { cache: "no-cache" });
+    res = await fetch(API + "user/item_id/" + id, { cache: "no-cache" });
     data = await res.json();
   } catch (error) {
     console.log(error);
@@ -22,24 +24,33 @@ const Page = async (request) => {
         </h2>
         <div>
           <p>
-           <span className="underline underline-offset-4 font-semibold">Upload images for:</span>  <br/>
-            Model: {data.result.laptop.brand}
-            {data.result.laptop.model}
-            
+            <span className="underline underline-offset-4 font-semibold">
+              Upload images for:
+            </span>{" "}
+            <br />
+            {data.result?.dataUrl}
           </p>
           <p className="text-sm italic py-2">
-            {data.result.images.length == 0
+            {data.result?.images?.length == 0
               ? "No image found, Uplaod ?"
-              : "Re-upload images and delete old ones ?"} 
+              : "Re-upload images and delete old ones ?"}
           </p>
-              <ol>
-                <li>Max images : 5</li>
-                <li>Image Ratio 16/9</li>
-                <li>Try to <Link href={"https://imageresizer.com/image-compressor/editor"} className="text-blue-600 underline underline-offset-4 italic font-semibold">Compares</Link> image first</li>
-              </ol>
-        
-            <Upload data={data.result}></Upload>
-         
+          <ol>
+            <li>Max images : 5</li>
+            <li>Image Ratio 16/9</li>
+            <li>
+              Try to{" "}
+              <Link
+                href={"https://imageresizer.com/image-compressor/editor"}
+                className="text-blue-600 underline underline-offset-4 italic font-semibold"
+              >
+                Compares
+              </Link>{" "}
+              image first
+            </li>
+          </ol>
+
+          <Upload data={data.result} type={type}></Upload>
         </div>
       </div>
 

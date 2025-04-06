@@ -8,7 +8,7 @@ const Page = async (request) => {
   const { id } = request.params;
   let res, data;
   try {
-    res = await fetch(API + "user/item_id/" + id, { cache: "no-cache" });
+    res = await fetch(API + "user/laptop_id/" + id, { cache: "no-cache" });
     data = await res.json();
   } catch (error) {
     console.log(error);
@@ -18,15 +18,16 @@ const Page = async (request) => {
     <div className="bg-stone-200/80 min-h-full px-6 py-3 flex justify-between flex-col">
       <div>
         <h2 className=" text-stone-800 font-bold border-b-2 border-dashed border-b-stone-500 mb-3 text-xl pt-2 pb-5">
-          Update an Item
+          Update a item
         </h2>
         <Form data={data.result}></Form>
         <div className="py-12 text-center">
           <Link
-            href={"/dashboard/upload-image/" + data.result._id + "?type=item"}
+            href={"/dashboard/upload-image/" + data.result._id +"?type=laptop" }
             className=" font-semibold bg-white px-6 py-3 shadow border-dashed border border-black"
           >
-            Upload or Modify Images for {data.result.title}
+            Upload or Modify Images for {data.result.laptop.brand}{" "}
+            {data.result.laptop.model}
           </Link>
         </div>
       </div>

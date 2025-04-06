@@ -11,7 +11,7 @@ import {
 } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
-const ImageFrom = ({ data, imgUrl, targetIndex }) => {
+const ImageFrom = ({ data, imgUrl, targetIndex, type }) => {
   const router = useRouter();
   const imgRef = useRef(null);
   const [upload, setUpload] = useState({
@@ -54,8 +54,9 @@ const ImageFrom = ({ data, imgUrl, targetIndex }) => {
       (snapshot) => {
         // Observe state change events such as progress, pause, and resume
         // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-        const UpProgress =
-          parseFloat((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed(2);
+        const UpProgress = parseFloat(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        ).toFixed(2);
         setUpload((prevState) => {
           return { status: true, progress: UpProgress, error: false };
         });
@@ -75,7 +76,7 @@ const ImageFrom = ({ data, imgUrl, targetIndex }) => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
           try {
             let url = downloadURL;
-            let upData = { id: data._id, url, index: targetIndex };
+            let upData = { id: data._id, url, index: targetIndex, type };
 
             const res = await fetch(API + "admin/upload-image", {
               method: "PUT",
@@ -92,7 +93,7 @@ const ImageFrom = ({ data, imgUrl, targetIndex }) => {
               status: false,
               progress: 0,
               error: false,
-            })
+            });
             if (imgRef.current) {
               imgRef.current.setAttribute("src", url);
             }
@@ -181,8 +182,21 @@ const ImageFrom = ({ data, imgUrl, targetIndex }) => {
       <div className="h-full w-full rounded-md overflow-hidden relative">
         {upload.status ? (
           <div className="absolute z-30 w-full h-full flex flex-col items-center justify-center bg-gray-300">
-            <p className="text-sm text-red-400">{upload.error ? "Error happened" : ""} </p>
-            {upload.error ? <button className="text-green-400 px-5 py-2 text-sm active:scale-95 duration-100" onClick={()=>setUpload({status: false, progress: 0, error: false,})}>Close</button>:""}
+            <p className="text-sm text-red-400">
+              {upload.error ? "Error happened" : ""}{" "}
+            </p>
+            {upload.error ? (
+              <button
+                className="text-green-400 px-5 py-2 text-sm active:scale-95 duration-100"
+                onClick={() =>
+                  setUpload({ status: false, progress: 0, error: false })
+                }
+              >
+                Close
+              </button>
+            ) : (
+              ""
+            )}
             Uploading <p>{upload.progress}%</p>
           </div>
         ) : (

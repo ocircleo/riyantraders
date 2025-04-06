@@ -18,7 +18,7 @@ const Page = () => {
     setItems({ loading: true, data: [] });
     try {
       const response = await fetch(
-        `${API}user/search_any_items_admin?text=${text}&stock=${stock}&sort=${price}&page=${page}`,{cache:"no-cache"}
+        `${API}user/search_items_admin?text=${text}&stock=${stock}&sort=${price}&page=${page}`,{cache:"no-cache"}
       );
       const data = await response.json();
       setPages({ current: page, length: data.result.length });
@@ -67,7 +67,7 @@ const Page = () => {
     <div className="bg-stone-200/80 min-h-full px-6 py-3 flex justify-between flex-col">
       <div>
         <h2 className=" text-stone-800 font-bold border-b-2 border-dashed border-b-stone-500 mb-3 text-xl pt-2 pb-5">
-          Edit items
+          Edit Laptops
         </h2>
         <form
           onSubmit={submitForm}
@@ -77,12 +77,12 @@ const Page = () => {
         >
           <fieldset className="flex flex-col gap-2 flex-grow">
             <label htmlFor="model" className="font-semibold">
-             Search by Item Title
+              Laptop Model
             </label>
             <input
               type="text"
               name="model"
-              placeholder="Item title"
+              placeholder="Laptop Model"
               id="model"
               className="py-3 px-2 bg-white rounded outline-indigo-500 w-full "
             ></input>
@@ -118,7 +118,8 @@ const Page = () => {
         </form>
         <div className="bg-indigo-400 text-white grid grid-cols-12 text-xs sm:text-sm md:text-base p-2 justify-items-center mt-4">
           <div className="col-span-1">Index</div>
-          <div className="col-span-3">Product</div>
+          <div className="col-span-3">Brand</div>
+          <div className="col-span-3">Model</div>
           <div className="col-span-2">Price</div>
           <div className="col-span-2">Stock</div>
           <div className="col-span-1">Edit</div>
